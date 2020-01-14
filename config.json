@@ -1,0 +1,38 @@
+{
+    "SERVER_ID": "swap_maker_strategy",
+    "LOG": {
+        "console": true,
+        "level": "INFO",
+        "path": "/data/logs/servers/swap_maker_strategy",
+        "name": "swap_maker_strategy.log",
+        "clear": true,
+        "backup_count": 5
+    },
+    "ACCOUNTS": [
+        {
+            "platform": "huobi_swap",
+            "account": "account",
+            "host": "https://xxx.pro",
+            "wss": "wss://yyy.pro",
+            "access_key": "access_key",
+            "secret_key": "secret_key"
+        }
+    ],
+    "MARKETS": [
+        {
+            "platform": "huobi_swap",
+            "channels":[
+                "orderbook", "kline", "trade"
+            ],
+            "orderbook_length": 10,
+            "orderbooks_length": 100,
+            "klines_length": 100,
+            "trades_length": 100,
+            "wss": "wss://yyy.pro"
+
+        }
+    ],
+    "strategy": "my_test_strategy",
+    "symbol": "BTC-USD",
+    "contract_type": "SWAP"
+}
