@@ -1,8 +1,9 @@
 
-## Swap Quant Framework of Python
-    An Asynchronous Event-driven High-frequency Trading System for MarketMakers、Liquidity providers and other HFT users.
 
-    ![text](https://raw.githubusercontent.com/hbdmapi/hbdm_Python/master/docs/framework.png)
+## An Asynchronous Event-driven High-frequency Trading System for MarketMakers、Liquidity providers and other HFT users.
+## Architecture
+
+![Architecture](https://raw.githubusercontent.com/hbdmapi/hbdm_Python/master/docs/framework.png)
 
    ### 1、Market Module
     Realtime Orderbook、kline、market trade details are subscribed by websocket for strategies callback.HBDM Swap has been integrated.
