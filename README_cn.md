@@ -1,6 +1,8 @@
 
+异步事件驱动的高频交易系统。适合做市商、高频量化用户使用。
+## 架构图
+![Architecture](https://raw.githubusercontent.com/hbdmapi/hbdm_Python/master/docs/framework.png)
 ## 合约量化框架
-    异步事件驱动的高频交易系统。适合做市商、高频量化用户使用,开箱即用；
    ### 1、行情模块
     ws订阅orderbook、kline、tradedetail等公开行情数据，提供回调给策略使用，目前已接入火币永续合约；
    ### 2、RESTAPI模块
