@@ -1,12 +1,12 @@
 
 ## Swap Quant Framework of Python
-    An Async Event-driven High-frequency Trading System for MarketMakers、Liquidity providers and other HFT users.
+    An Asynchronous Event-driven High-frequency Trading System for MarketMakers、Liquidity providers and other HFT users.
    ### 1、Market Module
-    Realtime Orderbook、kline、market trade details are subcribed by websocket for strategies callback.HBDM Swap has been integrated.
+    Realtime Orderbook、kline、market trade details are subscribed by websocket for strategies callback.HBDM Swap has been integrated.
    ### 2、RestFul API Module
-    APIs of HBDM Swap has been integrated such trade api、cancel api,etc. 
+    APIs of HBDM Swap has been integrated such as trade api、batch trade api、cancel api,etc. 
    ### 3、Asset Module
-    Assets are subcribed by websocket for strategies callback.HBDM Swap has been integrated.
+    Assets are subscribed by websocket for strategies callback.HBDM Swap has been integrated.
    ### 4、Position Module
     Positions are subscribed by websocket for strategies callback.HBDM Swap has been integrated.
    ### 5、Order Module
@@ -14,7 +14,7 @@
    ### 6、Logging Module
     Logs can log to files corresponding to different levels such as "DEBUG","INFO","WARN", "ERROR".
    ### 7、Trading Module
-    Common trade method and cancel method,etc.
+    Common trade interface and cancel interface,etc.
    ### 8、ErrorHandle Module
     websocket automatic reconnection mechanism, heartbeat mechanism,etc. 
    ### 9、RiskControl Module
@@ -31,8 +31,9 @@
    - edit "config.json"
      - "access_key": "api access_key"
      - "secret_key": "api secret_key"
+     - you may also have to change the host and wss address.
         
-        save and quit.
+     - save and quit.
    - bash scripts/run.sh
    - Happy Trading
 
