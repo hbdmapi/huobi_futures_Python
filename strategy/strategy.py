@@ -14,7 +14,6 @@ from alpha.utils import logger
 from alpha.config import config
 from alpha.market import Market
 from alpha.trade import Trade
-from alpha.const import HUOBI_SWAP
 from alpha.order import Order
 from alpha.orderbook import Orderbook
 from alpha.kline import Kline
@@ -48,13 +47,13 @@ class MyStrategy:
         self.trades_length = config.markets[0]["trades_length"]
         self.market_wss = config.markets[0]["wss"]
 
-        self.orderbook_invalid_seconds = 0.5
+        self.orderbook_invalid_seconds = 1
 
         self.last_bid_price = 0 # 上次的买入价格
         self.last_ask_price = 0 # 上次的卖出价格
         self.last_orderbook_timestamp = 0 # 上次的orderbook时间戳
 
-        self.raw_symbol = self.symbol.split('-')[0]
+        self.raw_symbol = self.symbol.split('_')[0] if self.contract_type != 'SWAP' else self.symbol.split('-')[0]
 
         self.ask1_price = 0
         self.bid1_price = 0

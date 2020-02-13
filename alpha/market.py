@@ -61,6 +61,8 @@ class Market:
 
         if platform == const.HUOBI_SWAP:
             from alpha.platforms.huobi_swap_market import HuobiSwapMarket  as M
+        elif platform == const.HUOBI_FUTURE:
+            from alpha.platforms.huobi_future_market import HuobiFutureMarket  as M
         else:
             logger.error("platform error:", platform, caller=self)
             return
