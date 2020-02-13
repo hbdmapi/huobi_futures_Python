@@ -1,10 +1,10 @@
 # -*- coding:utf-8 -*-
 
 """
-Huobi Swap Api Module.
+Huobi Future Api Module.
 
 Author: QiaoXiaofeng
-Date:   2020/01/10
+Date:   2020/02/10
 Email:  andyjoe318@gmail.com
 """
 
@@ -28,7 +28,7 @@ from alpha.position import Position
 from alpha.error import Error
 from alpha.utils import tools, logger
 from alpha.tasks import SingleTask, LoopRunTask
-from alpha.const import HUOBI_SWAP
+from alpha.const import HUOBI_FUTURE
 from alpha.utils.websocket import Websocket
 from alpha.utils.request import AsyncHttpRequests
 from alpha.utils.decorator import async_method_locker
@@ -37,13 +37,13 @@ from alpha.order import ORDER_TYPE_LIMIT, ORDER_TYPE_MARKET, ORDER_TYPE_MAKER, O
 from alpha.order import ORDER_STATUS_SUBMITTED, ORDER_STATUS_PARTIAL_FILLED, ORDER_STATUS_FILLED, \
     ORDER_STATUS_CANCELED, ORDER_STATUS_FAILED, TRADE_TYPE_BUY_OPEN, TRADE_TYPE_SELL_OPEN, TRADE_TYPE_BUY_CLOSE, \
     TRADE_TYPE_SELL_CLOSE
-from .huobi_swap_api import HuobiSwapRestAPI
+from .huobi_future_api import HuobiFutureRestAPI
 
 
-__all__ = ("HuobiSwapTrade", )
-    
-class HuobiSwapTrade(Websocket):
-    """ Huobi Swap Trade module. You can initialize trade object with some attributes in kwargs.
+__all__ = ("HuobiFutureTrade", )
+
+class HuobiFutureTrade(Websocket):
+    """ Huobi Future Trade module. You can initialize trade object with some attributes in kwargs.
 
     Attributes:
         account: Account name for this trade exchange.
@@ -94,37 +94,36 @@ class HuobiSwapTrade(Websocket):
 
         self._account = kwargs["account"]
         self._strategy = kwargs["strategy"]
-        self._platform = HUOBI_SWAP
-        self._symbol = kwargs["symbol"]
+        self._platform = HUOBI_FUTURE
+        self._symbol = kwargs["symbol"].split('_')[0]
         self._contract_type = kwargs["contract_type"]
         self._host = kwargs["host"]
         self._wss = kwargs["wss"]
         self._access_key = kwargs["access_key"]
         self._secret_key = kwargs["secret_key"]
+        self._asset_update_callback = kwargs.get("asset_update_callback")
         self._order_update_callback = kwargs.get("order_update_callback")
         self._position_update_callback = kwargs.get("position_update_callback")
-        self._asset_update_callback = kwargs.get("asset_update_callback")
         self._init_success_callback = kwargs.get("init_success_callback")
 
-        url = self._wss + "/swap-notification"
-        super(HuobiSwapTrade, self).__init__(url, send_hb_interval=5)
+        url = self._wss + "/notification"
+        super(HuobiFutureTrade, self).__init__(url, send_hb_interval=5)
 
         self._assets = {}  # Asset detail, {"BTC": {"free": "1.1", "locked": "2.2", "total": "3.3"}, ... }.
         self._orders = {}  # Order objects, {"order_id": order, ...}.
         self._position = Position(self._platform, self._account, self._strategy, self._symbol + '/' + self._contract_type)
 
-        self._order_channel = "orders.{symbol}".format(symbol=self._symbol)
-        self._position_channel = "positions.{symbol}".format(symbol=self._symbol)
-        self._asset_channel = "accounts.{symbol}".format(symbol=self._symbol)
+        self._order_channel = "orders.{symbol}".format(symbol=self._symbol.lower())
+        self._position_channel = "positions.{symbol}".format(symbol=self._symbol.lower())
+        self._asset_channel = "accounts.{symbol}".format(symbol=self._symbol.lower())
 
         self._subscribe_order_ok = False
         self._subscribe_position_ok = False
         self._subscribe_asset_ok = False
 
-        self._rest_api = HuobiSwapRestAPI(self._host, self._access_key, self._secret_key)
+        self._rest_api = HuobiFutureRestAPI(self._host, self._access_key, self._secret_key)
 
         self.initialize()
-
 
     @property
     def assets(self):
@@ -209,6 +208,7 @@ class HuobiSwapTrade(Websocket):
         }
         await self.ws.send_json(data)
 
+
     async def sub_callback(self, data):
         if data["err-code"] != 0:
             e = Error("subscribe {} failed!".format(data["topic"]))
@@ -221,8 +221,7 @@ class HuobiSwapTrade(Websocket):
             self._subscribe_position_ok = True
         elif data["topic"] == self._asset_channel:
             self._subscribe_asset_ok = True
-        if self._subscribe_order_ok and self._subscribe_position_ok \
-            and self._subscribe_asset_ok:
+        if self._subscribe_order_ok and self._subscribe_position_ok:
             success, error = await self._rest_api.get_open_orders(self._symbol)
             if error:
                 e = Error("get open orders failed!")
@@ -232,7 +231,7 @@ class HuobiSwapTrade(Websocket):
                 self._update_order(order_info)
             SingleTask.run(self._init_success_callback, True, None)
 
-    @async_method_locker("HuobiSwapTrade.process_binary.locker")
+    @async_method_locker("HuobiFutureTrade.process_binary.locker")
     async def process_binary(self, raw):
         """ 处理websocket上接收到的消息
         @param raw 原始的压缩数据
@@ -252,7 +251,7 @@ class HuobiSwapTrade(Websocket):
             await self.sub_callback(data)
 
         elif op == "notify":
-            if data["topic"].startswith("orders"):
+            if data["topic"] == self._order_channel:
                 self._update_order(data)
             elif data["topic"].startswith("positions"):
                 self._update_position(data)
@@ -370,10 +369,8 @@ class HuobiSwapTrade(Websocket):
 
             quantity = abs(int(order["quantity"]))
 
-            client_order_id = order.get("client_order_id", "")
-
-            orders_data.append({"contract_code": self._symbol, \
-                    "client_order_id": client_order_id, "price": order["price"], "volume": quantity, "direction": direction, "offset": offset, \
+            orders_data.append({"symbol": self._symbol, "contract_type": self._contract_type, "contract_code": "", \
+                    "client_order_id": "", "price": order["price"], "volume": quantity, "direction": direction, "offset": offset, \
                     "leverRate": lever_rate, "orderPriceType":  order_price_type})
 
         result, error = await self._rest_api.create_orders({"orders_data": orders_data})
@@ -437,7 +434,7 @@ class HuobiSwapTrade(Websocket):
         else:
             order_nos = []
             for order_info in success["data"]["orders"]:
-                if order_info["contract_code"] != self._symbol:
+                if order_info["contract_type"] != self._contract_type or order_info["symbol"] != self._symbol:
                     continue
                 order_nos.append(str(order_info["order_id"]))
             return order_nos, None
@@ -448,7 +445,7 @@ class HuobiSwapTrade(Websocket):
         Args:
             order_info: Order information.
         """
-        if order_info["contract_code"] != self._symbol:
+        if order_info["contract_type"] != self._contract_type or order_info["symbol"] != self._symbol:
             return
         order_no = str(order_info["order_id"])
         status = order_info["status"]
@@ -517,7 +514,7 @@ class HuobiSwapTrade(Websocket):
             None.
         """
         for position_info in data["data"]:
-            if position_info["contract_code"] != self._symbol:
+            if position_info["contract_type"] != self._contract_type or position_info["symbol"] != self._symbol:
                 continue
             if position_info["direction"] == "buy":
                 self._position.long_quantity = int(position_info["volume"])
@@ -528,7 +525,7 @@ class HuobiSwapTrade(Websocket):
             # self._position.liquid_price = None
             self._position.utime = data["ts"]
             SingleTask.run(self._position_update_callback, copy.copy(self._position))
-    
+
     def _update_asset(self, data):
         """ Asset update.
 
