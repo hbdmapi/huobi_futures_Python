@@ -293,6 +293,18 @@ class HuobiFutureRestAPI:
         }
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
+    
+    async def get_api_trading_status(self):
+        """ Get api trading status.
+        Args:
+            None.
+        Returns:
+            refet to https://huobiapi.github.io/docs/dm/v1/cn/#api-5
+        """
+        uri = "/api/v1/contract_api_trading_status"
+        success, error = await self.request("GET", uri, body=None, auth=True)
+        return success, error
+
 
     async def request(self, method, uri, params=None, body=None, headers=None, auth=False):
         """ Do HTTP request.
