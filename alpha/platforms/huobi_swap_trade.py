@@ -158,7 +158,7 @@ class HuobiSwapTrade(Websocket):
             "SignatureVersion": "2",
             "Timestamp": timestamp
         }
-        sign = self.generate_signature("GET", data, "/notification")
+        sign = self.generate_signature("GET", data, "/swap-notification")
         data["op"] = "auth"
         data["type"] = "api"
         data["Signature"] = sign
