@@ -138,6 +138,27 @@ class HuobiFutureRestAPI:
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
+    async def get_order_info(self, symbol, order_ids=[], client_order_ids=[]):
+        """ Get order information.
+
+        Args:
+            contract_code: such as "BTC".
+            order_ids: Order ID list. (different IDs are separated by ",", maximum 20 orders can be requested at one time.)
+            client_order_ids: Client Order ID list. (different IDs are separated by ",", maximum 20 orders can be requested at one time.)
+
+        Returns:
+            success: Success results, otherwise it's None.
+            error: Error information, otherwise it's None.
+        """
+        uri = "/api/v1/contract_order_info"
+        body = {
+            "symbol": symbol,
+            "order_id": ",".join(order_ids),
+            "client_order_id": ",".join(client_order_ids)
+        }
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+
     async def create_order(self, symbol, contract_type, contract_code, price, quantity, direction, offset, lever_rate,
                            order_price_type):
         """ Create an new order.
