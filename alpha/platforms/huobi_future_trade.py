@@ -360,9 +360,9 @@ class HuobiFutureTrade(Websocket):
                 order_price_type = "optimal_20"
             elif order["order_type"] == ORDER_TYPE_MAKER:
                 order_price_type = "post_only"
-            elif order_price_type == ORDER_TYPE_FOK:
+            elif  order["order_type"]  == ORDER_TYPE_FOK:
                 order_price_type = "fok"
-            elif order_price_type == ORDER_TYPE_IOC:
+            elif  order["order_type"]  == ORDER_TYPE_IOC:
                order_price_type = "ioc"
             else:
                 return None, "order type error"
