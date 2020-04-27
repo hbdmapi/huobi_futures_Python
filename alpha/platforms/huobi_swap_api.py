@@ -310,8 +310,8 @@ class HuobiSwapRestAPI:
             "type": stype,
             "status": status,
             "create_date": create_date,
-            "page_index": index,
-            "page_size": size
+            "page_index": page_index,
+            "page_size": page_size
         }
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
