@@ -11,6 +11,7 @@ Email:  andyjoe318@gmail.com
 import gzip
 import json
 import time
+import asyncio
 import copy
 from collections import deque
 
@@ -77,7 +78,10 @@ class HuobiSwapMarket(Websocket):
             logger.warn("websocket connection not connected yet!", caller=self)
             return
         data = {"pong": int(time.time()*1000)}
-        await self.ws.send_json(data)
+        try:
+            await self.ws.send_json(data)
+        except ConnectionResetError:
+            await asyncio.get_event_loop().create_task(self._reconnect())
 
     async def connected_callback(self):
         """ After create Websocket connection successfully, we will subscribing orderbook/trade events.
