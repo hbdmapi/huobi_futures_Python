@@ -320,12 +320,155 @@ class HuobiFutureRestAPI:
         Args:
             None.
         Returns:
-            refet to https://huobiapi.github.io/docs/dm/v1/cn/#api-5
+            refer to https://huobiapi.github.io/docs/dm/v1/cn/#api-5
         """
         uri = "/api/v1/contract_api_trading_status"
         success, error = await self.request("GET", uri, body=None, auth=True)
         return success, error
 
+    async def create_trigger_order(self, symbol, contract_type, trigger_type, \
+        trigger_price, order_price, order_price_type, volume, direction, offset, lever_rate, contract_code=None):
+        """ Create trigger order
+
+        Args:
+            symbol: symbol,such as BTC.
+            contract_type: contract type,such as this_week,next_week,quarter
+            contract_code: contract code,such as BTC190903. If filled,the above symbol and contract_type will be ignored.
+            trigger_type: trigger type,such as ge,le.
+            trigger_price: trigger price.
+            order_price: order price.
+            order_price_type: "limit" by default."optimal_5"\"optimal_10"\"optimal_20"
+            volume: volume.
+            direction: "buy" or "sell".
+            offset: "open" or "close".
+            lever_rate: lever rate.
+        
+        Returns:
+            refer to https://huobiapi.github.io/docs/dm/v1/cn/#97a9bd626d
+
+        """
+        uri = "/api/v1/contract_trigger_order"
+        body = {
+            "symbol": symbol,
+            "contract_type": contract_type,
+            "trigger_type": trigger_type,
+            "trigger_price": trigger_price,
+            "order_price": order_price,
+            "order_price_type": order_price_type,
+            "volume": volume,
+            "direction": direction,
+            "offset": offset,
+            "lever_rate": lever_rate
+        }
+        if contract_code:
+            body.update({"contract_code": contract_code})
+
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+    
+    async def revoke_trigger_order(self, symbol, order_id):
+        """ Revoke trigger order
+
+        Args: 
+            symbol: symbol,such as "BTC".
+            order_id: order ids.multiple orders need to be joined by ','.
+
+        Returns:
+            refer to https://huobiapi.github.io/docs/dm/v1/cn/#0d42beab34
+
+        """
+        uri = "/api/v1/contract_trigger_cancel"
+        body = {
+            "symbol": symbol,
+            "order_id": order_id
+        }
+        
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+    
+    async def revoke_all_trigger_orders(self, symbol, contract_code=None, contract_type=None):
+        """ Revoke all trigger orders
+
+        Args:
+            symbol: symbol, such as "BTC"
+            contract_code: contract_code, such as BTC180914.
+            contract_type: contract_type, such as this_week, next_week, quarter.
+        
+        Returns:
+            refer to https://huobiapi.github.io/docs/dm/v1/cn/#3d2471d520
+
+        """
+        uri = "/api/v1/contract_trigger_cancelall"
+        body = {
+            "symbol": symbol
+        }
+        if contract_code:
+            body.update({"contract_code": contract_code})
+        if contract_type:
+            body.update({"contract_type": contract_type})
+
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+    
+    async def get_trigger_openorders(self, symbol, contract_code=None, page_index=None, page_size=None):
+        """ Get trigger openorders
+        Args: 
+            symbol: symbol, such as "BTC"
+            contract_code: contract code, such as BTC180914.
+            page_index: page index.1 by default.
+            page_size: page size.20 by default.
+        
+        Returns: 
+            refer to https://huobiapi.github.io/docs/dm/v1/cn/#b5280a27b3
+        """
+
+        uri = "/api/v1/contract_trigger_openorders"
+        body = {
+            "symbol": symbol,
+        }
+        if contract_code:
+            body.update({"contract_code": contract_code})
+        if page_index:
+            body.update({"page_index": page_index})
+        if page_size:
+            body.update({"page_size": page_size})
+        
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+    
+    async def get_trigger_hisorders(self, symbol, trade_type, status, create_date, contract_code=None, page_index=None, page_size=None):
+        """ Get trigger hisorders
+        
+        Args:
+            symbol: symbol,such as "BTC"
+            contract_code: contract code.
+            trade_type: trade type. 0:all 1:open buy 2:open sell 3:close buy 4:close sell
+            status: status. 0: orders finished. 4: orders submitted. 5: order filled. 6:order cancelled. multiple status is joined by ','
+            create_date: days. such as 1-90.
+            page_index: 1 by default.
+            page_size: 20 by default.50 at most.
+
+        Returns:
+            https://huobiapi.github.io/docs/dm/v1/cn/#37aeb9f3bd
+
+        """
+
+        uri = "/api/v1/contract_trigger_hisorders"
+        body = {
+            "symbol": symbol,
+            "trade_type": trade_type,
+            "status": status,
+            "create_date": create_date,
+        }
+        if contract_code:
+            body.update({"contract_code": contract_code})
+        if page_index:
+            body.update({"page_index": page_index})
+        if page_size:
+            body.update({"page_size": page_size})
+        
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
 
     async def request(self, method, uri, params=None, body=None, headers=None, auth=False):
         """ Do HTTP request.
