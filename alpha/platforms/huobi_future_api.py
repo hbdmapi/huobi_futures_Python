@@ -469,6 +469,47 @@ class HuobiFutureRestAPI:
         
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
+    
+    async def lightning_close_position(self, symbol, contract_type, contract_code, volume, direction, client_order_id, \
+        order_price_type):
+        """ Close position.
+        
+        Args:
+            symbol: string.  eg: 'BTC'
+            contract_type: string. eg: 'this_week'\'next_week'\'quarter'
+            contract_code: string. eg: 'BTC190903'
+            volume: int. eg: 1
+            direction: string. eg: 'buy' or 'sell'
+            client_order_id: int. eg: 11
+            order_price_type: string. eg: "lightning"\"lightning_fok"\"lightning_ioc"
+        
+        Returns:
+            https://docs.huobigroup.com/docs/dm/v1/cn/#669c2a2e3d
+
+        """
+        uri = "/api/v1/lightning_close_position"
+        body = {
+                "volume": volume, 
+                "direction": direction, 
+               }
+
+        if symbol:
+            body.update({"symbol": symbol})
+        
+        if contract_type:
+            body.update({"contract_type": contract_type})
+        
+        if contract_code:
+            body.update({"contract_code": contract_code})
+        
+        if client_order_id:
+            body.update({"client_order_id": client_order_id})
+        
+        if order_price_type:
+            body.update({"order_price_type": order_price_type})
+        
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
 
     async def request(self, method, uri, params=None, body=None, headers=None, auth=False):
         """ Do HTTP request.
