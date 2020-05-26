@@ -11,7 +11,7 @@
     "ACCOUNTS": [
         {
             "platform": "huobi_future",
-            "account": "foonsun16",
+            "account": "account",
             "host": "https://api.hbdm.vn",
             "wss": "wss://api.hbdm.vn",
             "access_key": "access_key",

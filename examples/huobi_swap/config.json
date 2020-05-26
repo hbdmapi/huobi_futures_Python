@@ -11,7 +11,7 @@
     "ACCOUNTS": [
         {
             "platform": "huobi_swap",
-            "account": "foonsun16",
+            "account": "account",
             "host": "https://api.hbdm.vn",
             "wss": "wss://api.hbdm.vn",
             "access_key": "access_key",
@@ -22,7 +22,7 @@
         {
             "platform": "huobi_swap",
             "channels":[
-                "orderbook"
+                "orderbook", "kline", "trade"
             ],
             "orderbook_length": 10,
             "orderbooks_length": 100,
@@ -34,5 +34,5 @@
     ],
     "strategy": "my_test_strategy",
     "symbol": "BTC-USD",
-    "contract_type": "quarter"
+    "contract_type": "SWAP"
 }
