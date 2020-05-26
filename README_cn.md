@@ -32,7 +32,7 @@
      - "access_key": "填入您在火币合约的api access_key"
      - "secret_key": "填入您在火币合约的api secret_key"
     然后保存退出
-   - 在对应目录下运行 bash scripts/run.sh 策略即开始运行。
+   - 在对应目录下运行 bash run.sh 策略即开始运行。
 
 ## Demo使用示例
 

@@ -40,7 +40,7 @@
      - you may also have to change the host and wss address.
         
      - save and quit.
-   - bash scripts/run.sh
+   - bash run.sh
    - Happy Trading
 
 ## Demo Tutorial

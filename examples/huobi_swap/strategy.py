@@ -95,8 +95,8 @@ class MyStrategy:
         }
         self.market = Market(**cc)
         
-        # 10秒执行1次
-        LoopRunTask.register(self.on_ticker, 10)
+        # 1秒执行1次
+        LoopRunTask.register(self.on_ticker, 2)
 
     async def on_ticker(self, *args, **kwargs):
         """ 定时执行任务
@@ -125,7 +125,7 @@ class MyStrategy:
         orders_data = []
         if self.trader.position and self.trader.position.short_quantity:
             # 平空单
-            price = self.ask1_price - 0.1
+            price = round(self.ask1_price - 0.1, 1)
             quantity = -self.trader.position.short_quantity
             action = ORDER_ACTION_BUY
             new_price = str(price)  # 将价格转换为字符串，保持精度
@@ -134,7 +134,7 @@ class MyStrategy:
                 self.last_ask_price = self.ask1_price
         if self.trader.assets and self.trader.assets.assets.get(self.raw_symbol):
             # 开空单
-            price = self.bid1_price + 0.1
+            price = round(self.bid1_price + 0.1, 1)
             volume = float(self.trader.assets.assets.get(self.raw_symbol).get("free")) * price // 100 
             if volume >= 1:
                 quantity = - volume #  空1张
