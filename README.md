@@ -6,15 +6,15 @@
 ![Architecture](https://raw.githubusercontent.com/hbdmapi/hbdm_Python/master/docs/framework.png)
 
    ### 1、Market Module
-    Realtime Orderbook、kline、market trade details are subscribed by websocket for strategies callback.HBDM Swap has been integrated.
+    Realtime Orderbook、kline、market trade details are subscribed by websocket for strategies callback.Huobi Swap and Huobi Future has been integrated.
    ### 2、RestFul API Module
-    APIs of HBDM Swap has been integrated such as trade api、batch trade api、cancel api,etc. 
+    APIs of Huobi Swap and Huobi Future has been integrated such as trade api、batch trade api、cancel api,etc. 
    ### 3、Asset Module
-    Assets are subscribed by websocket for strategies callback.HBDM Swap has been integrated.
+    Assets are subscribed by websocket for strategies callback.Huobi Swap and Huobi Future has been integrated.
    ### 4、Position Module
-    Positions are subscribed by websocket for strategies callback.HBDM Swap has been integrated.
+    Positions are subscribed by websocket for strategies callback.Huobi Swap and Huobi Future has been integrated.
    ### 5、Order Module
-    Orders are subscribed by websocket for strategies callback.HBDM Swap has been integrated.
+    Orders are subscribed by websocket for strategies callback.Huobi Swap and Huobi Future has been integrated.
    ### 6、Logging Module
     Logs can log to files corresponding to different levels such as "DEBUG","INFO","WARN", "ERROR".
    ### 7、Trading Module
@@ -29,9 +29,11 @@
 ## Install Steps
     python:python 3.5.3 above
     git clone https://github.com/hbdmapi/hbdm_Python.git
-    pip install -r requirements.txt
+    pip install . --ignore-installed
 
 ## Quick Start
+   - cd examples
+   - cd huobi_swap
    - edit "config.json"
      - "access_key": "api access_key"
      - "secret_key": "api secret_key"
@@ -47,12 +49,11 @@ Demo strategy only implements a simple sell short and close short strategy.
 > NOTE: The demo strategy needs to be modified to run in production。
 
 
-## Project dirs:
+## Strategy dirs:
 ```text
 ProjectName
     |----- docs
     |       |----- README.md
-    |----- alpha
     |----- scripts
     |       |----- run.sh
     |----- config.json

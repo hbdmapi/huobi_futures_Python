@@ -1,0 +1,38 @@
+{
+    "SERVER_ID": "future_maker_strategy",
+    "LOG": {
+        "console": true,
+        "level": "INFO",
+        "path": "/data/logs/servers/future_maker_strategy",
+        "name": "future_maker_strategy.log",
+        "clear": true,
+        "backup_count": 5
+    },
+    "ACCOUNTS": [
+        {
+            "platform": "huobi_future",
+            "account": "foonsun16",
+            "host": "https://api.hbdm.vn",
+            "wss": "wss://api.hbdm.vn",
+            "access_key": "access_key",
+            "secret_key": "secret_key"
+        }
+    ],
+    "MARKETS": [
+        {
+            "platform": "huobi_future",
+            "channels":[
+                "orderbook", "kline", "trade"
+            ],
+            "orderbook_length": 10,
+            "orderbooks_length": 100,
+            "klines_length": 100,
+            "trades_length": 100,
+            "wss": "wss://api.hbdm.vn"
+
+        }
+    ],
+    "strategy": "my_test_strategy",
+    "symbol": "BTC",
+    "contract_type": "quarter"
+}

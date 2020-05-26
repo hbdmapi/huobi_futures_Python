@@ -1,12 +1,5 @@
 # -*- coding:utf-8 -*-
 
-"""
-Asynchronous HTTP Request Client.
-Author: HuangTao
-Date:   2018/05/03
-Email:  huangtao@ifclover.com
-"""
-
 import json
 import aiohttp
 from urllib.parse import urlparse

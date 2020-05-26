@@ -1,7 +1,7 @@
 # -*— coding:utf-8 -*-
 
 """
-Huobi Swap Market Demo.
+Huobi Future Demo.
 
 Author: QiaoXiaofeng
 Date:   2020/1/10
@@ -13,7 +13,7 @@ import sys
 
 
 def initialize():
-    from strategy.strategy import MyStrategy
+    from strategy import MyStrategy
     MyStrategy()
 
 

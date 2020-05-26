@@ -4,12 +4,9 @@
 DingTalk Bot API.
 https://open-doc.dingtalk.com/microapp/serverapi2/qf2nxq
 
-Author: HuangTao
-Date:   2018/08/04
-Email:  huangtao@ifclover.com
 """
 
-from quant.utils.http_client import AsyncHttpRequests
+from alpha.utils.request import AsyncHttpRequests
 
 
 class DingTalk:
