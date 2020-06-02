@@ -511,6 +511,26 @@ class HuobiFutureRestAPI:
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
+
+    async def transfer_between_spot_future(self, symbol, amount, type_s):
+        """ Do transfer between spot and future.
+        Args:
+            symbol: currency,such as btc,eth,etc.
+            amount: transfer amount.pls note the precision digit is 8.
+            type_s: "pro-to-futures","futures-to-pro"
+
+        """
+        body = {
+                "currency": symbol,
+                "amount": amount,
+                "type": type_s
+                }
+
+        uri = 'https://api.huobi.pro/v1/futures/transfer'
+
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+
     async def request(self, method, uri, params=None, body=None, headers=None, auth=False):
         """ Do HTTP request.
 
@@ -526,7 +546,10 @@ class HuobiFutureRestAPI:
             success: Success results, otherwise it's None.
             error: Error information, otherwise it's None.
         """
-        url = urljoin(self._host, uri)
+        if uri.startswith("http://") or uri.startswith("https://"):
+            url = uri
+        else:
+            url = urljoin(self._host, uri)
 
         if auth:
             timestamp = datetime.datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
@@ -561,7 +584,11 @@ class HuobiFutureRestAPI:
         return result, None
 
     def generate_signature(self, method, params, request_path):
-        host_url = urllib.parse.urlparse(self._host).hostname.lower()
+        if request_path.startswith("http://") or request_path.startswith("https://"):
+            host_url = urllib.parse.urlparse(request_path).hostname.lower()
+            request_path = '/' + '/'.join(request_path.split('/')[3:])
+        else:
+            host_url = urllib.parse.urlparse(self._host).hostname.lower()
         sorted_params = sorted(params.items(), key=lambda d: d[0], reverse=False)
         encode_params = urllib.parse.urlencode(sorted_params)
         payload = [method, host_url, request_path, encode_params]
