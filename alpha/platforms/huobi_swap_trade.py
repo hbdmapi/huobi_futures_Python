@@ -309,7 +309,7 @@ class HuobiSwapTrade(Websocket):
             return None, "order type error"
 
         quantity = abs(int(quantity))
-        result, error = await self._rest_api.create_order(self._symbol, self._contract_type, '',
+        result, error = await self._rest_api.create_order(self._symbol,
                                                           price, quantity, direction, offset, lever_rate,
                                                           order_price_type)
         if error:
