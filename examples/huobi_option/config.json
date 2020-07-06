@@ -1,0 +1,37 @@
+{
+    "SERVER_ID": "option_strategy",
+    "LOG": {
+        "console": true,
+        "level": "INFO",
+        "path": "/data/logs/servers/option_strategy",
+        "name": "option_strategy.log",
+        "clear": true,
+        "backup_count": 5
+    },
+    "ACCOUNTS": [
+        {
+            "platform": "huobi_option",
+            "account": "foonsun888",
+            "host": "",
+            "wss": "",
+            "access_key": "access_key",
+            "secret_key": "secret_key"
+        }
+    ],
+    "MARKETS": [
+        {
+            "platform": "huobi_option",
+            "channels":[
+                "orderbook", "kline", "trade"
+            ],
+            "orderbook_length": 10,
+            "orderbooks_length": 100,
+            "klines_length": 100,
+            "trades_length": 100,
+            "wss": ""
+
+        }
+    ],
+    "strategy": "my_test_strategy",
+    "symbol": "BTC-USDT-200717-C-9300"
+}
