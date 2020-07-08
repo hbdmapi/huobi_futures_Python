@@ -137,6 +137,23 @@ class HuobiFutureRestAPI:
             body["symbol"] = symbol
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
+    
+    async def get_account_position(self, symbol=None):
+        """ Get position and account information.
+
+        Args:
+            symbol: Currency name, e.g. BTC. default `None` will return all types.
+
+        Returns:
+            success: Success results, otherwise it's None.
+            error: Error information, otherwise it's None.
+        """
+        uri = "/api/v1/contract_account_position_info"
+        body = {}
+        if symbol:
+            body["symbol"] = symbol
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
 
     async def get_order_info(self, symbol, order_ids=[], client_order_ids=[]):
         """ Get order information.

@@ -396,7 +396,7 @@ class HuobiOptionTrade(Websocket):
         """
         # If len(order_nos) == 0, you will cancel all orders for this symbol(initialized in Trade object).
         if len(order_nos) == 0:
-            success, error = await self._rest_api.revoke_order_all(self._raw_symbol, "", "", self._symbol)
+            success, error = await self._rest_api.revoke_order_all(self._trade_partition, "", self._symbol)
             if error:
                 return False, error
             if success.get("errors"):
@@ -405,7 +405,7 @@ class HuobiOptionTrade(Websocket):
 
         # If len(order_nos) == 1, you will cancel an order.
         if len(order_nos) == 1:
-            success, error = await self._rest_api.revoke_order(self._raw_symbol, "", order_nos[0])
+            success, error = await self._rest_api.revoke_order(self._trade_partition, order_nos[0])
             if error:
                 return order_nos[0], error
             if success.get("errors"):
@@ -415,7 +415,7 @@ class HuobiOptionTrade(Websocket):
 
         # If len(order_nos) > 1, you will cancel multiple orders.
         if len(order_nos) > 1:
-            success, error = await self._rest_api.revoke_orders(self._raw_symbol, "", order_nos)
+            success, error = await self._rest_api.revoke_orders(self._trade_partition, order_nos)
             if error:
                 return order_nos[0], error
             if success.get("errors"):

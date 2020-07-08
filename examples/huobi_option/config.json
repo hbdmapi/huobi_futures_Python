@@ -12,8 +12,16 @@
         {
             "platform": "huobi_option",
             "account": "foonsun888",
-            "host": "",
-            "wss": "",
+            "host": "https://api.hbdm.vn",
+            "wss": "wss://api.hbdm.vn",
+            "access_key": "access_key",
+            "secret_key": "secret_key"
+        },
+        {
+            "platform": "huobi_future",
+            "account": "foonsun888",
+            "host": "https://api.hbdm.vn",
+            "wss": "wss://api.hbdm.vn",
             "access_key": "access_key",
             "secret_key": "secret_key"
         }
@@ -21,6 +29,7 @@
     "MARKETS": [
         {
             "platform": "huobi_option",
+            "symbol": "BTC-USDT-200710-C-9200",
             "channels":[
                 "orderbook", "kline", "trade"
             ],
@@ -28,10 +37,23 @@
             "orderbooks_length": 100,
             "klines_length": 100,
             "trades_length": 100,
-            "wss": ""
+            "wss": "wss://api.hbdm.vn"
+
+        },
+        {
+            "platform": "huobi_future",
+            "symbol": "BTC",
+            "contract_type": "this_week",
+            "channels":[
+                "orderbook", "kline", "trade"
+            ],
+            "orderbook_length": 10,
+            "orderbooks_length": 100,
+            "klines_length": 100,
+            "trades_length": 100,
+            "wss": "wss://api.hbdm.vn"
 
         }
     ],
-    "strategy": "my_test_strategy",
-    "symbol": "BTC-USDT-200717-C-9300"
+    "strategy": "option_strategy"
 }

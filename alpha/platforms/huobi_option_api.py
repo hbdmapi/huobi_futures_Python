@@ -208,13 +208,13 @@ class HuobiOptionRestAPI:
         return success, error
         
 
-    async def revoke_order(self, symbol, trade_partition="", order_id="", client_order_id=""):
+    async def revoke_order(self, trade_partition="", order_id="", client_order_id=""):
         """ Revoke an order.
 
         Args:
-            symbol: such as "BTC".
             trade_partition: trade partition such as "USDT".
             order_id: Order ID.
+            client_order_id: client order.
 
         Returns:
             success: Success results, otherwise it's None.
@@ -222,7 +222,6 @@ class HuobiOptionRestAPI:
         """
         uri = "/option-api/v1/option_cancel"
         body = {
-            "symbol": symbol,
             "trade_partition": trade_partition,
             "order_id": order_id,
             "client_order_id": client_order_id
@@ -230,11 +229,10 @@ class HuobiOptionRestAPI:
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
-    async def revoke_orders(self, symbol,  trade_partition="", order_ids=[], client_order_ids=[]):
+    async def revoke_orders(self, trade_partition="", order_ids=[], client_order_ids=[]):
         """ Revoke multiple orders.
 
         Args:
-            symbol: such as "BTC".
             trade_partition: trade partition such as "USDT".
             order_ids: Order ID list.
 
@@ -244,7 +242,6 @@ class HuobiOptionRestAPI:
         """
         uri = "/option-api/v1/option_cancel"
         body = {
-            "symbol": symbol,
             "trade_partition": trade_partition,
             "order_id": ",".join(order_ids),
             "client_order_id": ",".join(client_order_ids)
@@ -252,11 +249,10 @@ class HuobiOptionRestAPI:
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
-    async def revoke_order_all(self, symbol, trade_partition="", contract_type="", contract_code=""):
+    async def revoke_order_all(self, trade_partition="", contract_type="", contract_code=""):
         """ Revoke all orders.
 
         Args:
-            symbol: such as "BTC".
             trade_partition: such as "USDT".
             contract_type: such as "this_week", "next_week", "quarter".
             contract_code: such as "BTC-USDT-200508-C-8800".
@@ -269,7 +265,6 @@ class HuobiOptionRestAPI:
         """
         uri = "/option-api/v1/option_cancelall"
         body = {
-            "symbol": symbol,
             "trade_partition": trade_partition,
             "contract_type": contract_type,
             "contract_code": contract_code

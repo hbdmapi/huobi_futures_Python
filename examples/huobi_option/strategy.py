@@ -3,7 +3,7 @@
 极简做市策略，仅做演示使用
 
 Author: Qiaoxiaofeng
-Date:   2020/06/28
+Date:   2020/07/04
 Email: andyjoe318@gmail.com
 """
 # 策略实现
@@ -38,7 +38,15 @@ class MyStrategy:
         self.secret_key = config.accounts[0]["secret_key"]
         self.host = config.accounts[0]["host"]
         self.wss = config.accounts[0]["wss"]
-        self.symbol = config.symbol
+
+        self.future_platform = config.accounts[1]["platform"]
+        self.future_account = config.accounts[1]["account"]
+        self.future_access_key = config.accounts[1]["access_key"]
+        self.future_secret_key = config.accounts[1]["secret_key"]
+        self.future_host = config.accounts[1]["host"]
+        self.future_wss = config.accounts[1]["wss"]
+
+        self.symbol = config.markets[0]["symbol"]
         self.channels = config.markets[0]["channels"]
         self.orderbook_length = config.markets[0]["orderbook_length"]
         self.orderbooks_length = config.markets[0]["orderbooks_length"]
@@ -46,9 +54,21 @@ class MyStrategy:
         self.trades_length = config.markets[0]["trades_length"]
         self.market_wss = config.markets[0]["wss"]
 
-        self.orderbook_invalid_seconds = 100
+        self.future_symbol = config.markets[1]["symbol"]
+        self.future_contract_type = config.markets[1]["contract_type"]
+        self.future_channels = config.markets[1]["channels"]
+        self.future_orderbook_length = config.markets[1]["orderbook_length"]
+        self.future_orderbooks_length = config.markets[1]["orderbooks_length"]
+        self.future_klines_length = config.markets[1]["klines_length"]
+        self.future_trades_length = config.markets[1]["trades_length"]
+        self.future_market_wss = config.markets[1]["wss"]
+
+        self.orderbook_invalid_seconds = 100 # orderbook无效时间
         self.spread = 0.5 # 价差设定
         self.volume = 1 # 每次开仓数量
+        self.max_quantity = 10 # 最大仓位数量(多仓的最大仓位数量和空仓的最大数量)
+        self.delta_limit = 1 # delta超过多少进行对冲
+        self.future_volume_usd = 100 # 交割合约面值
 
         self.last_bid_price = 0 # 上次的买入价格
         self.last_ask_price = 0 # 上次的卖出价格
@@ -82,6 +102,23 @@ class MyStrategy:
         }
         self.trader = Trade(**cc)
 
+        future_cc = {
+            "strategy": self.strategy,
+            "platform": self.future_platform,
+            "symbol": self.future_symbol,
+            "contract_type": self.future_contract_type,
+            "account": self.future_account,
+            "access_key": self.future_access_key,
+            "secret_key": self.future_secret_key,
+            "host": self.future_host,
+            "wss": self.future_wss,
+            "order_update_callback": self.on_event_order_update_future,
+            "asset_update_callback": self.on_event_asset_update_future,
+            "position_update_callback": self.on_event_position_update_future,
+            "init_success_callback": self.on_event_init_success_callback_future,
+        }
+        self.future_trader = Trade(**future_cc)
+
         # 行情模块
         cc = {
             "platform": self.platform,
@@ -97,16 +134,46 @@ class MyStrategy:
             "trade_update_callback": self.on_event_trade_update
         }
         self.market = Market(**cc)
+
+        if self.future_contract_type == "this_week":
+            self.future_contract_code = self.future_symbol + "_CW"
+        elif self.future_contract_type == "next_week":
+            self.future_contract_code = self.future_symbol + "_NW"
+        elif self.future_contract_type == "quarter":
+            self.future_contract_code = self.future_symbol + "_CQ"
+
+        # 行情模块
+        market_cc = {
+            "platform": self.future_platform,
+            "symbols": [self.future_contract_code],
+            "channels": self.future_channels,
+            "orderbook_length": self.future_orderbook_length,
+            "orderbooks_length": self.future_orderbooks_length,
+            "klines_length": self.future_klines_length,
+            "trades_length": self.future_trades_length,
+            "wss": self.future_market_wss,
+            "orderbook_update_callback": self.on_event_orderbook_update_future,
+            "kline_update_callback": self.on_event_kline_update_future,
+            "trade_update_callback": self.on_event_trade_update_future
+        }
+        self.future_market = Market(**market_cc)
         
-        # 2秒执行1次
+        # 10秒执行1次
         LoopRunTask.register(self.on_ticker, 10)
 
-        # TODO：delta对冲，可以使用现货或者期货进行delta对冲等操作。
-        LoopRunTask.register(self.delta_hedging, 3600)
+        # delta对冲
+        LoopRunTask.register(self.delta_hedging, 10)
 
+    
     async def on_ticker(self, *args, **kwargs):
         """ 定时执行任务
         """
+        if self.trader.assets is None:
+            return
+
+        if self.trader.position is None:
+            return
+
         ts_diff = int(time.time()*1000) - self.last_orderbook_timestamp
         if ts_diff > self.orderbook_invalid_seconds * 1000:
             logger.warn("received orderbook timestamp exceed:", self.strategy, self.symbol, ts_diff, caller=self)
@@ -132,9 +199,9 @@ class MyStrategy:
         if order_nos:
             _, errors = await self.trader.revoke_order(*order_nos)
             if errors:
-                logger.error(self.strategy,"cancel future order error! error:", errors, caller=self)
+                logger.error(self.strategy,"cancel option order error! error:", errors, caller=self)
             else:
-                logger.info(self.strategy,"cancel future order:", order_nos, caller=self)
+                logger.info(self.strategy,"cancel option order:", order_nos, caller=self)
     
     async def place_orders(self):
         """ 下单
@@ -158,24 +225,32 @@ class MyStrategy:
             if quantity:
                 orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT })
                 self.last_mark_price = self.mark_price
+
         if self.trader.assets and self.trader.assets.assets.get(self.raw_symbol).get("free"):
             # 开空单
+            if self.trader.position and  self.trader.position.short_quantity >= self.max_quantity:
+                logger.warn("option short position exceeds the max quantity: ", self.symbol, self.trader.position.short_quantity, self.max_quantity, caller=self)
+                return
             price = round(self.bid1_price + self.spread, 1)
-            volume = 1 
-            if volume >= 1:
-                quantity = - volume #  空1张
+            volume = self.volume 
+            if volume:
+                quantity = - volume #  空张
                 action = ORDER_ACTION_SELL
                 new_price = str(price)  # 将价格转换为字符串，保持精度
                 if quantity:
                     orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT })
                     self.last_mark_price = self.mark_price
 
-        # if self.trader.assets and self.trader.assets.assets.get(self.partition_symbol).get("free"):
+        #TODO: fix me!
+        #if self.trader.assets and self.trader.assets.assets.get(self.partition_symbol).get("free"):
             # 开多单
+            if self.trader.position and  self.trader.position.long_quantity >= self.max_quantity:
+                logger.warn("option long position exceeds the max quantity: ", self.symbol, self.trader.position.long_quantity, self.max_quantity, caller=self)
+                return
             price = round(self.bid1_price - self.spread, 1)
-            volume = 1 
-            if volume >= 1:
-                quantity = volume #  多1张
+            volume = self.volume 
+            if volume:
+                quantity = volume #  多张
                 action = ORDER_ACTION_BUY
                 new_price = str(price)  # 将价格转换为字符串，保持精度
                 if quantity:
@@ -194,13 +269,71 @@ class MyStrategy:
         logger.debug("delta hedging", caller=self)
         o_delta = 0
         assets, error = await self.trader.rest_api.get_asset_info(self.raw_symbol)
-        for item in assets:
-            if item["symbol"] == self.raw_symbol:
-                o_delta = item["delta"]
-                o_gamma = item["gamma"]
-                o_theta = item["theta"]
-                o_vega = item["vega"]
-        #TODO: 增加delta对冲，现货或者期货对冲。 
+        if error: 
+            logger.error(self.strategy, "get option asset error! error:", error, caller=self)
+        else:
+            for item in assets["data"]:
+                if item["symbol"] == self.raw_symbol:
+                    o_delta = item["delta"]
+                    o_gamma = item["gamma"]
+                    o_theta = item["theta"]
+                    o_vega = item["vega"]
+            #TODO: 增加delta对冲，现货或者期货对冲。 
+            accounts, error = await self.future_trader.rest_api.get_account_position(self.raw_symbol)
+            if error:
+                logger.error(self.strategy, "get future account and position error! error:", error, caller=self)
+            else:
+                margin_balance = accounts["data"][0]["margin_balance"]
+                long_position = 0
+                short_position = 0
+                delta_long = 0
+                delta_short = 0
+                last_price = 0
+                for position in accounts["data"][0]["positions"]:
+                    if position["direction"] == "buy":
+                        long_position = position["volume"]
+                        long_cost_open = position["cost_open"]
+                        last_price = position["last_price"]
+                    if position["direction"] == "sell":
+                        short_position = position["volume"]
+                        short_cost_open = position["cost_open"]
+                        last_price = position["last_price"]
+                if long_position:
+                    delta_long = self.future_volume_usd * int(long_position)/float(long_cost_open)
+                if short_position:
+                    delta_short = self.future_volume_usd * int(short_position)/float(short_cost_open)
+                future_delta = margin_balance - delta_short + delta_long
+                t_delta = o_delta - future_delta
+                orders_data = []
+                # 对冲对应数量的币
+                if abs(t_delta) >= self.delta_limit:
+                    if t_delta > 0 :
+                        # 开空单
+                        price = 0
+                        volume = int(t_delta * last_price / self.future_volume_usd) 
+                        if volume:
+                            quantity = - volume #  
+                            action = ORDER_ACTION_SELL
+                            new_price = str(price)  # 将价格转换为字符串，保持精度
+                            if quantity:
+                                orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_MARKET })
+                    else:
+                        # 开多单
+                        price = 0
+                        volume = abs(int(t_delta * last_price / self.future_volume_usd)) 
+                        if volume:
+                            quantity = volume #  
+                            action = ORDER_ACTION_BUY
+                            new_price = str(price)  # 将价格转换为字符串，保持精度
+                            if quantity:
+                                orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_MARKET })
+
+                if orders_data:
+                    order_nos, error = await self.future_trader.create_orders(orders_data)
+                    if error:
+                        logger.error(self.strategy, "create future order error! error:", error, caller=self)
+                    else:
+                        logger.info(self.strategy, "create future orders success:", order_nos, caller=self)
 
     async def on_event_orderbook_update(self, orderbook: Orderbook):
         """  orderbook更新
@@ -249,4 +382,45 @@ class MyStrategy:
         """ init success callback
         """
         logger.debug("init success callback update:", success, error, kwargs, caller=self)
+    
+    async def on_event_orderbook_update_future(self, orderbook: Orderbook):
+        """  orderbook更新
+            self.market.orderbooks 是最新的orderbook组成的队列，记录的是历史N次orderbook的数据。
+            本回调所传的orderbook是最新的单次orderbook。
+        """
+        logger.debug("future orderbook:", orderbook, caller=self)
+
+    async def on_event_order_update_future(self, order: Order):
+        """ 订单状态更新
+        """
+        logger.info("future order update:", order, caller=self)
+
+    async def on_event_asset_update_future(self, asset: Asset):
+        """ 资产更新
+        """
+        logger.info("future asset update:", asset, caller=self)
+
+    async def on_event_position_update_future(self, position: Position):
+        """ 仓位更新
+        """
+        logger.info("future position update:", position, caller=self)
+    
+    async def on_event_kline_update_future(self, kline: Kline):
+        """ kline更新
+            self.market.klines 是最新的kline组成的队列，记录的是历史N次kline的数据。
+            本回调所传的kline是最新的单次kline。
+        """
+        logger.debug("future kline update:", kline, caller=self)
+    
+    async def on_event_trade_update_future(self, trade: MarketTrade):
+        """ market trade更新
+            self.market.trades 是最新的逐笔成交组成的队列，记录的是历史N次trade的数据。
+            本回调所传的trade是最新的单次trade。
+        """
+        logger.debug("future trade update:", trade, caller=self)
+    
+    async def on_event_init_success_callback_future(self, success: bool, error: Error, **kwargs):
+        """ init success callback
+        """
+        logger.debug("future init success callback update:", success, error, kwargs, caller=self)
 
