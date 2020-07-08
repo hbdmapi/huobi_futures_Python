@@ -64,7 +64,7 @@ class MyStrategy:
         self.future_market_wss = config.markets[1]["wss"]
 
         self.orderbook_invalid_seconds = 100 # orderbook无效时间
-        self.spread = 0.5 # 价差设定
+        self.spread = 1 # 价差设定
         self.volume = 1 # 每次开仓数量
         self.max_quantity = 10 # 最大仓位数量(多仓的最大仓位数量和空仓的最大数量)
         self.delta_limit = 1 # delta超过多少进行对冲
@@ -231,7 +231,7 @@ class MyStrategy:
             if self.trader.position and  self.trader.position.short_quantity >= self.max_quantity:
                 logger.warn("option short position exceeds the max quantity: ", self.symbol, self.trader.position.short_quantity, self.max_quantity, caller=self)
                 return
-            price = round(self.bid1_price + self.spread, 1)
+            price = round(self.mark_price + self.spread, 1)
             volume = self.volume 
             if volume:
                 quantity = - volume #  空张
@@ -247,7 +247,7 @@ class MyStrategy:
             if self.trader.position and  self.trader.position.long_quantity >= self.max_quantity:
                 logger.warn("option long position exceeds the max quantity: ", self.symbol, self.trader.position.long_quantity, self.max_quantity, caller=self)
                 return
-            price = round(self.bid1_price - self.spread, 1)
+            price = round(self.mark_price - self.spread, 1)
             volume = self.volume 
             if volume:
                 quantity = volume #  多张
