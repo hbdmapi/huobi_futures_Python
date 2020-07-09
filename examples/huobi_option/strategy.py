@@ -267,18 +267,21 @@ class MyStrategy:
         """ delta hedge
         """
         logger.debug("delta hedging", caller=self)
-        o_delta = 0
+        option_delta = 0
         assets, error = await self.trader.rest_api.get_asset_info(self.raw_symbol)
         if error: 
             logger.error(self.strategy, "get option asset error! error:", error, caller=self)
         else:
             for item in assets["data"]:
                 if item["symbol"] == self.raw_symbol:
+                    o_margin_balance = item["margin_balance"]
                     o_delta = item["delta"]
                     o_gamma = item["gamma"]
                     o_theta = item["theta"]
                     o_vega = item["vega"]
-            #TODO: 增加delta对冲，现货或者期货对冲。 
+                    option_delta = o_delta + o_margin_balance
+
+            #增加delta对冲，使用期货对冲。 
             accounts, error = await self.future_trader.rest_api.get_account_position(self.raw_symbol)
             if error:
                 logger.error(self.strategy, "get future account and position error! error:", error, caller=self)
@@ -288,29 +291,30 @@ class MyStrategy:
                 short_position = 0
                 delta_long = 0
                 delta_short = 0
-                last_price = 0
+                long_last_price = 0
+                short_last_price = 0
                 for position in accounts["data"][0]["positions"]:
                     if position["direction"] == "buy":
                         long_position = position["volume"]
                         long_cost_open = position["cost_open"]
-                        last_price = position["last_price"]
+                        long_last_price = position["last_price"]
                     if position["direction"] == "sell":
                         short_position = position["volume"]
                         short_cost_open = position["cost_open"]
-                        last_price = position["last_price"]
+                        short_last_price = position["last_price"]
                 if long_position:
-                    delta_long = self.future_volume_usd * int(long_position)/float(long_cost_open)
+                    delta_long = self.future_volume_usd * int(long_position)/float(long_last_price)
                 if short_position:
-                    delta_short = self.future_volume_usd * int(short_position)/float(short_cost_open)
+                    delta_short = self.future_volume_usd * int(short_position)/float(short_last_price)
                 future_delta = margin_balance - delta_short + delta_long
-                t_delta = o_delta - future_delta
+                t_delta = option_delta + future_delta
                 orders_data = []
                 # 对冲对应数量的币
                 if abs(t_delta) >= self.delta_limit:
                     if t_delta > 0 :
                         # 开空单
                         price = 0
-                        volume = int(t_delta * last_price / self.future_volume_usd) 
+                        volume = int(t_delta * long_last_price / self.future_volume_usd) 
                         if volume:
                             quantity = - volume #  
                             action = ORDER_ACTION_SELL
@@ -320,7 +324,7 @@ class MyStrategy:
                     else:
                         # 开多单
                         price = 0
-                        volume = abs(int(t_delta * last_price / self.future_volume_usd)) 
+                        volume = abs(int(t_delta * long_last_price / self.future_volume_usd)) 
                         if volume:
                             quantity = volume #  
                             action = ORDER_ACTION_BUY
