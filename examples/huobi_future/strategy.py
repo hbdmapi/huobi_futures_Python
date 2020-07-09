@@ -60,6 +60,12 @@ class MyStrategy:
         self.ask1_volume = 0
         self.bid1_volume = 0
 
+        if self.contract_type == "this_week":
+            self.future_contract_code = self.symbol + "_CW"
+        elif self.contract_type == "next_week":
+            self.future_contract_code = self.symbol + "_NW"
+        elif self.contract_type == "quarter":
+            self.future_contract_code = self.symbol + "_CQ"
 
         # 交易模块
         cc = {
@@ -82,7 +88,7 @@ class MyStrategy:
         # 行情模块
         cc = {
             "platform": self.platform,
-            "symbols": [self.symbol],
+            "symbols": [self.future_contract_code],
             "channels": self.channels,
             "orderbook_length": self.orderbook_length,
             "orderbooks_length": self.orderbooks_length,
