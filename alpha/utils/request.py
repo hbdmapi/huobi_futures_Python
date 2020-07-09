@@ -45,16 +45,16 @@ class AsyncHttpRequests(object):
             kwargs["proxy"] = config.proxy
         try:
             if method == "GET":
-                response = await session.get(url, params=params, headers=headers, timeout=timeout, verify_ssl=False, **kwargs)
+                response = await session.get(url, params=params, headers=headers, timeout=timeout, **kwargs)
             elif method == "POST":
                 response = await session.post(url, params=params, data=body, json=data, headers=headers,
-                                              timeout=timeout, verify_ssl=False, **kwargs)
+                                              timeout=timeout, **kwargs)
             elif method == "PUT":
                 response = await session.put(url, params=params, data=body, json=data, headers=headers,
-                                             timeout=timeout, verify_ssl=False, **kwargs)
+                                             timeout=timeout, **kwargs)
             elif method == "DELETE":
                 response = await session.delete(url, params=params, data=body, json=data, headers=headers,
-                                                timeout=timeout, verify_ssl=False, **kwargs)
+                                                timeout=timeout, **kwargs)
             else:
                 error = "http method error!"
                 return None, None, error
