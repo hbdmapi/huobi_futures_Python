@@ -221,11 +221,13 @@ class HuobiOptionRestAPI:
             error: Error information, otherwise it's None.
         """
         uri = "/option-api/v1/option_cancel"
-        body = {
-            "trade_partition": trade_partition,
-            "order_id": order_id,
-            "client_order_id": client_order_id
-        }
+        body = {}
+        if trade_partition:
+            body.update({'trade_partition': trade_partition})
+        if order_id:
+            body.update({'order_id': order_id})
+        if client_order_id:
+            body.update({'client_order_id': client_order_id})
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
@@ -242,17 +244,21 @@ class HuobiOptionRestAPI:
         """
         uri = "/option-api/v1/option_cancel"
         body = {
-            "trade_partition": trade_partition,
-            "order_id": ",".join(order_ids),
-            "client_order_id": ",".join(client_order_ids)
         }
+        if trade_partition:
+            body.update({'trade_partition': trade_partition})
+        if order_ids:
+            body.update({'order_id': ",".join(order_ids)})
+        if client_order_ids:
+            body.update({'client_order_id': ",".join(client_order_ids)})
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
-    async def revoke_order_all(self, trade_partition="", contract_type="", contract_code=""):
+    async def revoke_order_all(self, symbol = "", trade_partition="", contract_type="", contract_code=""):
         """ Revoke all orders.
 
         Args:
+            symbol: such as "BTC".
             trade_partition: such as "USDT".
             contract_type: such as "this_week", "next_week", "quarter".
             contract_code: such as "BTC-USDT-200508-C-8800".
@@ -265,10 +271,15 @@ class HuobiOptionRestAPI:
         """
         uri = "/option-api/v1/option_cancelall"
         body = {
-            "trade_partition": trade_partition,
-            "contract_type": contract_type,
-            "contract_code": contract_code
         }
+        if symbol:
+            body.update({"symbol": symbol})
+        if trade_partition:
+            body.update({"trade_partition": trade_partition})
+        if contract_type:
+            body.update({"contract_type": contract_type})
+        if contract_code:
+            body.update({"contract_code": contract_code})
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
@@ -288,11 +299,14 @@ class HuobiOptionRestAPI:
         """
         uri = "/option-api/v1/option_order_info"
         body = {
-            "symbol": symbol,
-            "trade_partition": trade_partition,
-            "order_id": ",".join(order_ids),
-            "client_order_id": ",".join(client_order_ids)
+            "symbol": symbol
         }
+        if trade_partition:
+            body.update({"trade_partition": trade_partition})
+        if order_ids:
+            body.update({"order_id": ",".join(order_ids)})
+        if client_order_ids:
+            body.update({"client_order_id": ",".join(client_order_ids)})
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
@@ -312,12 +326,17 @@ class HuobiOptionRestAPI:
         """
         uri = "/option-api/v1/option_openorders"
         body = {
-            "symbol": symbol,
-            "trade_partition": trade_partition,
-            "contract_code": contract_code,
             "page_index": index,
             "page_size": size
         }
+
+        if symbol:
+            body.update({"symbol": symbol})
+        if trade_partition:
+            body.update({"trade_partition": trade_partition})
+        if contract_code:
+            body.update({"contract_code": contract_code})
+
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
     
@@ -346,16 +365,19 @@ class HuobiOptionRestAPI:
         uri = "/option-api/v1/option_hisorders"
         body = {
             "symbol": symbol,
-            "trade_partition": trade_partition,
-            "contract_code": contract_code,
             "trade_type": trade_type,
             "type": stype,
-            "order_type": order_type,
             "status": status,
             "create_date": create_date,
             "page_index": page_index,
             "page_size": page_size
         }
+        if trade_partition:
+            body.update({"trade_partition": trade_partition})
+        if contract_code:
+            body.update({"contract_code": contract_code})
+        if order_type:
+            body.update({"order_type": order_type})
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 

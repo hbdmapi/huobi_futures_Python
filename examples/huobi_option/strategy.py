@@ -228,34 +228,33 @@ class MyStrategy:
 
         if self.trader.assets and self.trader.assets.assets.get(self.raw_symbol).get("free"):
             # 开空单
-            if self.trader.position and  self.trader.position.short_quantity >= self.max_quantity:
+            if self.trader.position and  self.trader.position.short_quantity and self.trader.position.short_quantity >= self.max_quantity:
                 logger.warn("option short position exceeds the max quantity: ", self.symbol, self.trader.position.short_quantity, self.max_quantity, caller=self)
-                return
-            price = round(self.mark_price + self.spread, 1)
-            volume = self.volume 
-            if volume:
-                quantity = - volume #  空张
-                action = ORDER_ACTION_SELL
-                new_price = str(price)  # 将价格转换为字符串，保持精度
-                if quantity:
-                    orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT })
-                    self.last_mark_price = self.mark_price
+            else:
+                price = round(self.mark_price + self.spread, 1)
+                volume = self.volume 
+                if volume:
+                    quantity = - volume #  空张
+                    action = ORDER_ACTION_SELL
+                    new_price = str(price)  # 将价格转换为字符串，保持精度
+                    if quantity:
+                        orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT })
+                        self.last_mark_price = self.mark_price
 
-        #TODO: fix me!
-        #if self.trader.assets and self.trader.assets.assets.get(self.partition_symbol).get("free"):
+        if self.trader.assets and self.trader.assets.assets.get(self.partition_symbol).get("free"):
             # 开多单
-            if self.trader.position and  self.trader.position.long_quantity >= self.max_quantity:
+            if self.trader.position and  self.trader.position.long_quantity and self.trader.position.long_quantity >= self.max_quantity:
                 logger.warn("option long position exceeds the max quantity: ", self.symbol, self.trader.position.long_quantity, self.max_quantity, caller=self)
-                return
-            price = round(self.mark_price - self.spread, 1)
-            volume = self.volume 
-            if volume:
-                quantity = volume #  多张
-                action = ORDER_ACTION_BUY
-                new_price = str(price)  # 将价格转换为字符串，保持精度
-                if quantity:
-                    orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT })
-                    self.last_mark_price = self.mark_price
+            else:
+                price = round(self.mark_price - self.spread, 1)
+                volume = self.volume 
+                if volume:
+                    quantity = volume #  多张
+                    action = ORDER_ACTION_BUY
+                    new_price = str(price)  # 将价格转换为字符串，保持精度
+                    if quantity:
+                        orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT })
+                        self.last_mark_price = self.mark_price
 
         if orders_data:
             order_nos, error = await self.trader.create_orders(orders_data)
