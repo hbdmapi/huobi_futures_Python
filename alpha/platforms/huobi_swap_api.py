@@ -130,6 +130,21 @@ class HuobiSwapRestAPI:
             body["contract_code"] = contract_code
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
+    
+    async def get_account_position(self, contract_code):
+        """ Get position and account information.
+
+        Args:
+            contract_code: Currency name, e.g. BTC-USD.
+
+        Returns:
+            success: Success results, otherwise it's None.
+            error: Error information, otherwise it's None.
+        """
+        uri = "/swap-api/v1/swap_account_position_info"
+        body = {"contract_code": contract_code}
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
 
     async def create_order(self, contract_code, price, quantity, direction, offset, lever_rate,
                            order_price_type, client_order_id=None):

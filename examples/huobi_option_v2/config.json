@@ -1,0 +1,59 @@
+{
+    "SERVER_ID": "option_strategy_v2",
+    "LOG": {
+        "console": true,
+        "level": "INFO",
+        "path": "/data/logs/servers/option_strategy_v2",
+        "name": "option_strategy_v2.log",
+        "clear": true,
+        "backup_count": 5
+    },
+    "ACCOUNTS": [
+        {
+            "platform": "huobi_option",
+            "account": "foonsun888",
+            "host": "https://api.hbdm.vn",
+            "wss": "wss://api.hbdm.vn",
+            "access_key": "access_key",
+            "secret_key": "secret_key"
+        },
+        {
+            "platform": "huobi_swap",
+            "account": "foonsun888",
+            "host": "https://api.hbdm.vn",
+            "wss": "wss://api.hbdm.vn",
+            "access_key": "access_key",
+            "secret_key": "secret_key"
+        }
+    ],
+    "MARKETS": [
+        {
+            "platform": "huobi_option",
+            "symbol": "BTC-USDT-200717-C-9000",
+            "channels":[
+                "orderbook", "kline", "trade"
+            ],
+            "orderbook_length": 10,
+            "orderbooks_length": 100,
+            "klines_length": 100,
+            "trades_length": 100,
+            "wss": "wss://api.hbdm.vn"
+
+        },
+        {
+            "platform": "huobi_swap",
+            "symbol": "BTC-USD",
+            "contract_type": "SWAP",
+            "channels":[
+                "orderbook", "kline", "trade"
+            ],
+            "orderbook_length": 10,
+            "orderbooks_length": 100,
+            "klines_length": 100,
+            "trades_length": 100,
+            "wss": "wss://api.hbdm.vn"
+
+        }
+    ],
+    "strategy": "option_strategy_v2"
+}

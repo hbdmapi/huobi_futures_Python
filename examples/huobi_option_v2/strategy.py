@@ -39,12 +39,12 @@ class MyStrategy:
         self.host = config.accounts[0]["host"]
         self.wss = config.accounts[0]["wss"]
 
-        self.future_platform = config.accounts[1]["platform"]
-        self.future_account = config.accounts[1]["account"]
-        self.future_access_key = config.accounts[1]["access_key"]
-        self.future_secret_key = config.accounts[1]["secret_key"]
-        self.future_host = config.accounts[1]["host"]
-        self.future_wss = config.accounts[1]["wss"]
+        self.swap_platform = config.accounts[1]["platform"]
+        self.swap_account = config.accounts[1]["account"]
+        self.swap_access_key = config.accounts[1]["access_key"]
+        self.swap_secret_key = config.accounts[1]["secret_key"]
+        self.swap_host = config.accounts[1]["host"]
+        self.swap_wss = config.accounts[1]["wss"]
 
         self.symbol = config.markets[0]["symbol"]
         self.channels = config.markets[0]["channels"]
@@ -54,21 +54,21 @@ class MyStrategy:
         self.trades_length = config.markets[0]["trades_length"]
         self.market_wss = config.markets[0]["wss"]
 
-        self.future_symbol = config.markets[1]["symbol"]
-        self.future_contract_type = config.markets[1]["contract_type"]
-        self.future_channels = config.markets[1]["channels"]
-        self.future_orderbook_length = config.markets[1]["orderbook_length"]
-        self.future_orderbooks_length = config.markets[1]["orderbooks_length"]
-        self.future_klines_length = config.markets[1]["klines_length"]
-        self.future_trades_length = config.markets[1]["trades_length"]
-        self.future_market_wss = config.markets[1]["wss"]
+        self.swap_symbol = config.markets[1]["symbol"]
+        self.swap_contract_type = config.markets[1]["contract_type"]
+        self.swap_channels = config.markets[1]["channels"]
+        self.swap_orderbook_length = config.markets[1]["orderbook_length"]
+        self.swap_orderbooks_length = config.markets[1]["orderbooks_length"]
+        self.swap_klines_length = config.markets[1]["klines_length"]
+        self.swap_trades_length = config.markets[1]["trades_length"]
+        self.swap_market_wss = config.markets[1]["wss"]
 
         self.orderbook_invalid_seconds = 100 # orderbook无效时间
         self.spread = 1 # 价差设定
         self.volume = 1 # 每次开仓数量
         self.max_quantity = 10 # 最大仓位数量(多仓的最大仓位数量和空仓的最大数量)
         self.delta_limit = 1 # delta超过多少进行对冲
-        self.future_volume_usd = 100 # 交割合约面值
+        self.swap_volume_usd = 100 # 合约面值
 
         self.last_bid_price = 0 # 上次的买入价格
         self.last_ask_price = 0 # 上次的卖出价格
@@ -102,22 +102,22 @@ class MyStrategy:
         }
         self.trader = Trade(**cc)
 
-        future_cc = {
+        swap_cc = {
             "strategy": self.strategy,
-            "platform": self.future_platform,
-            "symbol": self.future_symbol,
-            "contract_type": self.future_contract_type,
-            "account": self.future_account,
-            "access_key": self.future_access_key,
-            "secret_key": self.future_secret_key,
-            "host": self.future_host,
-            "wss": self.future_wss,
-            "order_update_callback": self.on_event_order_update_future,
-            "asset_update_callback": self.on_event_asset_update_future,
-            "position_update_callback": self.on_event_position_update_future,
-            "init_success_callback": self.on_event_init_success_callback_future,
+            "platform": self.swap_platform,
+            "symbol": self.swap_symbol,
+            "contract_type": self.swap_contract_type,
+            "account": self.swap_account,
+            "access_key": self.swap_access_key,
+            "secret_key": self.swap_secret_key,
+            "host": self.swap_host,
+            "wss": self.swap_wss,
+            "order_update_callback": self.on_event_order_update_swap,
+            "asset_update_callback": self.on_event_asset_update_swap,
+            "position_update_callback": self.on_event_position_update_swap,
+            "init_success_callback": self.on_event_init_success_callback_swap,
         }
-        self.future_trader = Trade(**future_cc)
+        self.swap_trader = Trade(**swap_cc)
 
         # 行情模块
         cc = {
@@ -135,28 +135,21 @@ class MyStrategy:
         }
         self.market = Market(**cc)
 
-        if self.future_contract_type == "this_week":
-            self.future_contract_code = self.future_symbol + "_CW"
-        elif self.future_contract_type == "next_week":
-            self.future_contract_code = self.future_symbol + "_NW"
-        elif self.future_contract_type == "quarter":
-            self.future_contract_code = self.future_symbol + "_CQ"
-
         # 行情模块
         market_cc = {
-            "platform": self.future_platform,
-            "symbols": [self.future_contract_code],
-            "channels": self.future_channels,
-            "orderbook_length": self.future_orderbook_length,
-            "orderbooks_length": self.future_orderbooks_length,
-            "klines_length": self.future_klines_length,
-            "trades_length": self.future_trades_length,
-            "wss": self.future_market_wss,
-            "orderbook_update_callback": self.on_event_orderbook_update_future,
-            "kline_update_callback": self.on_event_kline_update_future,
-            "trade_update_callback": self.on_event_trade_update_future
+            "platform": self.swap_platform,
+            "symbols": [self.swap_symbol],
+            "channels": self.swap_channels,
+            "orderbook_length": self.swap_orderbook_length,
+            "orderbooks_length": self.swap_orderbooks_length,
+            "klines_length": self.swap_klines_length,
+            "trades_length": self.swap_trades_length,
+            "wss": self.swap_market_wss,
+            "orderbook_update_callback": self.on_event_orderbook_update_swap,
+            "kline_update_callback": self.on_event_kline_update_swap,
+            "trade_update_callback": self.on_event_trade_update_swap
         }
-        self.future_market = Market(**market_cc)
+        self.swap_market = Market(**market_cc)
         
         # 10秒执行1次
         LoopRunTask.register(self.on_ticker, 10)
@@ -270,7 +263,9 @@ class MyStrategy:
         assets, error = await self.trader.rest_api.get_asset_info(self.raw_symbol)
         if error: 
             logger.error(self.strategy, "get option asset error! error:", error, caller=self)
-        else:
+        #else:
+        if True:
+            import ipdb;ipdb.set_trace()
             for item in assets["data"]:
                 if item["symbol"] == self.raw_symbol:
                     o_margin_balance = item["margin_balance"]
@@ -279,11 +274,12 @@ class MyStrategy:
                     o_theta = item["theta"]
                     o_vega = item["vega"]
                     option_delta = o_delta + o_margin_balance
+            
 
             #增加delta对冲，使用期货对冲。 
-            accounts, error = await self.future_trader.rest_api.get_account_position(self.raw_symbol)
+            accounts, error = await self.swap_trader.rest_api.get_account_position(self.swap_symbol)
             if error:
-                logger.error(self.strategy, "get future account and position error! error:", error, caller=self)
+                logger.error(self.strategy, "get swap account and position error! error:", error, caller=self)
             else:
                 margin_balance = accounts["data"][0]["margin_balance"]
                 long_position = 0
@@ -302,18 +298,18 @@ class MyStrategy:
                         short_cost_open = position["cost_open"]
                         short_last_price = position["last_price"]
                 if long_position:
-                    delta_long = self.future_volume_usd * int(long_position)/float(long_last_price)
+                    delta_long = self.swap_volume_usd * int(long_position)/float(long_last_price)
                 if short_position:
-                    delta_short = self.future_volume_usd * int(short_position)/float(short_last_price)
-                future_delta = margin_balance - delta_short + delta_long
-                t_delta = option_delta + future_delta
+                    delta_short = self.swap_volume_usd * int(short_position)/float(short_last_price)
+                swap_delta = margin_balance - delta_short + delta_long
+                t_delta = option_delta + swap_delta
                 orders_data = []
                 # 对冲对应数量的币
                 if abs(t_delta) >= self.delta_limit:
                     if t_delta > 0 :
                         # 开空单
                         price = 0
-                        volume = int(t_delta * long_last_price / self.future_volume_usd) 
+                        volume = int(t_delta * long_last_price / self.swap_volume_usd) 
                         if volume:
                             quantity = - volume #  
                             action = ORDER_ACTION_SELL
@@ -323,20 +319,20 @@ class MyStrategy:
                     else:
                         # 开多单
                         price = 0
-                        volume = abs(int(t_delta * long_last_price / self.future_volume_usd)) 
+                        volume = abs(int(t_delta * long_last_price / self.swap_volume_usd)) 
                         if volume:
                             quantity = volume #  
                             action = ORDER_ACTION_BUY
                             new_price = str(price)  # 将价格转换为字符串，保持精度
                             if quantity:
-                                orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_MARKET, "lever_rate": 10 })
+                                orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_MARKET, "lever_rate": 10})
 
                 if orders_data:
-                    order_nos, error = await self.future_trader.create_orders(orders_data)
+                    order_nos, error = await self.swap_trader.create_orders(orders_data)
                     if error:
-                        logger.error(self.strategy, "create future order error! error:", error, caller=self)
+                        logger.error(self.strategy, "create swap order error! error:", error, caller=self)
                     else:
-                        logger.info(self.strategy, "create future orders success:", order_nos, caller=self)
+                        logger.info(self.strategy, "create swap orders success:", order_nos, caller=self)
 
     async def on_event_orderbook_update(self, orderbook: Orderbook):
         """  orderbook更新
@@ -386,44 +382,44 @@ class MyStrategy:
         """
         logger.debug("init success callback update:", success, error, kwargs, caller=self)
     
-    async def on_event_orderbook_update_future(self, orderbook: Orderbook):
+    async def on_event_orderbook_update_swap(self, orderbook: Orderbook):
         """  orderbook更新
             self.market.orderbooks 是最新的orderbook组成的队列，记录的是历史N次orderbook的数据。
             本回调所传的orderbook是最新的单次orderbook。
         """
-        logger.debug("future orderbook:", orderbook, caller=self)
+        logger.debug("swap orderbook:", orderbook, caller=self)
 
-    async def on_event_order_update_future(self, order: Order):
+    async def on_event_order_update_swap(self, order: Order):
         """ 订单状态更新
         """
-        logger.info("future order update:", order, caller=self)
+        logger.info("swap order update:", order, caller=self)
 
-    async def on_event_asset_update_future(self, asset: Asset):
+    async def on_event_asset_update_swap(self, asset: Asset):
         """ 资产更新
         """
-        logger.info("future asset update:", asset, caller=self)
+        logger.info("swap asset update:", asset, caller=self)
 
-    async def on_event_position_update_future(self, position: Position):
+    async def on_event_position_update_swap(self, position: Position):
         """ 仓位更新
         """
-        logger.info("future position update:", position, caller=self)
+        logger.info("swap position update:", position, caller=self)
     
-    async def on_event_kline_update_future(self, kline: Kline):
+    async def on_event_kline_update_swap(self, kline: Kline):
         """ kline更新
             self.market.klines 是最新的kline组成的队列，记录的是历史N次kline的数据。
             本回调所传的kline是最新的单次kline。
         """
-        logger.debug("future kline update:", kline, caller=self)
+        logger.debug("swap kline update:", kline, caller=self)
     
-    async def on_event_trade_update_future(self, trade: MarketTrade):
+    async def on_event_trade_update_swap(self, trade: MarketTrade):
         """ market trade更新
             self.market.trades 是最新的逐笔成交组成的队列，记录的是历史N次trade的数据。
             本回调所传的trade是最新的单次trade。
         """
-        logger.debug("future trade update:", trade, caller=self)
+        logger.debug("swap trade update:", trade, caller=self)
     
-    async def on_event_init_success_callback_future(self, success: bool, error: Error, **kwargs):
+    async def on_event_init_success_callback_swap(self, success: bool, error: Error, **kwargs):
         """ init success callback
         """
-        logger.debug("future init success callback update:", success, error, kwargs, caller=self)
+        logger.debug("swap init success callback update:", success, error, kwargs, caller=self)
 
