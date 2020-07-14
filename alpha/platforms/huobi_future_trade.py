@@ -551,12 +551,21 @@ class HuobiFutureTrade(Websocket):
             update = False
         else:
             update = True
-        info = {
-            "platform": self._platform,
-            "account": self._account,
-            "assets": assets,
-            "timestamp": tools.get_cur_timestamp_ms(),
-            "update": update
-        }
-        asset = Asset(**info)
-        self._assets = asset
+        if hasattr(self._assets, "assets") is False:
+            info = {
+                "platform": self._platform,
+                "account": self._account,
+                "assets": assets,
+                "timestamp": tools.get_cur_timestamp_ms(),
+                "update": update
+            }
+            asset = Asset(**info)
+            self._assets = asset
+            SingleTask.run(self._asset_update_callback, copy.copy(self._assets))
+        else:
+            for symbol in assets:
+                self._assets.assets.update({
+                    symbol: assets[symbol]
+                    })
+            self._assets.timestamp = tools.get_cur_timestamp_ms()
+            SingleTask.run(self._asset_update_callback, copy.copy(self._assets))

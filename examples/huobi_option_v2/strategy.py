@@ -218,7 +218,6 @@ class MyStrategy:
             if quantity:
                 orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT })
                 self.last_mark_price = self.mark_price
-
         if self.trader.assets and self.trader.assets.assets.get(self.raw_symbol).get("free"):
             # 开空单
             if self.trader.position and  self.trader.position.short_quantity and self.trader.position.short_quantity >= self.max_quantity:
@@ -263,9 +262,7 @@ class MyStrategy:
         assets, error = await self.trader.rest_api.get_asset_info(self.raw_symbol)
         if error: 
             logger.error(self.strategy, "get option asset error! error:", error, caller=self)
-        #else:
-        if True:
-            import ipdb;ipdb.set_trace()
+        else:
             for item in assets["data"]:
                 if item["symbol"] == self.raw_symbol:
                     o_margin_balance = item["margin_balance"]
@@ -275,7 +272,6 @@ class MyStrategy:
                     o_vega = item["vega"]
                     option_delta = o_delta + o_margin_balance
             
-
             #增加delta对冲，使用期货对冲。 
             accounts, error = await self.swap_trader.rest_api.get_account_position(self.swap_symbol)
             if error:
