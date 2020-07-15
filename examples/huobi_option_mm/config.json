@@ -1,10 +1,10 @@
 {
-    "SERVER_ID": "option_strategy_v2",
+    "SERVER_ID": "option_strategy_mm",
     "LOG": {
         "console": true,
         "level": "INFO",
-        "path": "/data/logs/servers/option_strategy_v2",
-        "name": "option_strategy_v2.log",
+        "path": "/data/logs/servers/option_strategy_mm",
+        "name": "option_strategy_mm.log",
         "clear": true,
         "backup_count": 5
     },
@@ -14,16 +14,16 @@
             "account": "foonsun888",
             "host": "https://api.hbdm.vn",
             "wss": "wss://api.hbdm.vn",
-            "access_key": "access_key",
-            "secret_key": "secret_key"
+            "access_key": "access key",
+            "secret_key": "secret key"
         },
         {
             "platform": "huobi_swap",
             "account": "foonsun888",
             "host": "https://api.hbdm.vn",
             "wss": "wss://api.hbdm.vn",
-            "access_key": "access_key",
-            "secret_key": "secret_key"
+            "access_key": "access key",
+            "secret_key": "secret key"
         }
     ],
     "MARKETS": [
@@ -55,5 +55,11 @@
 
         }
     ],
-    "strategy": "option_strategy_v2"
+    "strategy": "option_strategy_mm",
+    "orderbook_invalid_seconds": 5,
+    "spread": 1,
+    "quantity": 1,
+    "max_quantity": 10,
+    "delta_limit": 1,
+    "swap_volume_usd": 10
 }

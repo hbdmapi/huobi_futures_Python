@@ -63,12 +63,13 @@ class MyStrategy:
         self.swap_trades_length = config.markets[1]["trades_length"]
         self.swap_market_wss = config.markets[1]["wss"]
 
-        self.orderbook_invalid_seconds = 100 # orderbook无效时间
-        self.spread = 1 # 价差设定
-        self.volume = 1 # 每次开仓数量
-        self.max_quantity = 10 # 最大仓位数量(多仓的最大仓位数量和空仓的最大数量)
-        self.delta_limit = 1 # delta超过多少进行对冲
-        self.swap_volume_usd = 100 # 合约面值
+
+        self.orderbook_invalid_seconds = config.orderbook_invalid_seconds
+        self.spread = config.spread
+        self.volume = config.quantity
+        self.max_quantity = config.max_quantity
+        self.delta_limit = config.delta_limit
+        self.swap_volume_usd = config.swap_volume_usd
 
         self.last_bid_price = 0 # 上次的买入价格
         self.last_ask_price = 0 # 上次的卖出价格
@@ -193,6 +194,12 @@ class MyStrategy:
             _, errors = await self.trader.revoke_order(*order_nos)
             if errors:
                 logger.error(self.strategy,"cancel option order error! error:", errors, caller=self)
+                # 出错则取消所有挂单
+                _, errors = await self.trader.revoke_order()
+                if errors:
+                    logger.error(self.strategy,"cancel all option orders error! error:", errors, caller=self)
+                else:
+                    logger.info(self.strategy,"cancel all option orders success!", caller=self)
             else:
                 logger.info(self.strategy,"cancel option order:", order_nos, caller=self)
     
