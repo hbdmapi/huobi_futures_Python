@@ -4,22 +4,23 @@
 
 ## delta计算
 
-i. 假设期权BTC总delta为Do,期权的持仓(BTC)账户权益(margin_balance)为Mo,获取到的期权的持仓(BTC)delta为Dp，则:
+i. 假设期权BTC总delta为 `Do`,期权的持仓(BTC)账户权益(margin_balance)为`Mo`,获取到的期权的持仓(BTC)delta为 `Dp`，则:
 
-                Do = Dp + Mo
+            Do = Dp + Mo
 
-ii. 假设火币永续合约BTC总delta为Ds,的账户权益(BTC)（margin_balance）为Ms,持有的多仓(BTC)张数为Ls,持有的空仓(BTC)张数为Ss，当前BTC最新价为Ps,则:
+ii. 假设火币永续合约BTC总delta为`Ds`,的账户权益(BTC)（margin_balance）为`Ms`,持有的多仓(BTC)张数为`Ls`,持有的空仓(BTC)张数为`Ss`，当前BTC最新价为`Ps`,则:
 
             Ds = Ms + Ls*100/Ps - Ss*100/Ps
-iii. 假设总delta为D，则:
+
+iii. 假设总delta为`D`，则:
 
             D = Do + Ds
 
 iv. 如果abs(D)>=阈值：
 
-    如果D>=0,则在永续卖空int(D*Ps/100)张的仓位；
+    如果D>=0,则在永续卖空 int(D*Ps/100) 张的仓位；
 
-    如果D<0,则在永续买多int((abs(D)*Ps/100))张的仓位；
+    如果D<0,则在永续买多 int((abs(D)*Ps/100)) 张的仓位；
 
 
 ## 策略使用说明
