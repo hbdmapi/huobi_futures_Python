@@ -380,6 +380,157 @@ class HuobiOptionRestAPI:
             body.update({"order_type": order_type})
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
+    
+    async def create_trigger_order(self, contract_code, trigger_type, \
+        trigger_price, order_price, order_price_type, volume, direction, offset):
+        """ Create trigger order
+
+        Args:
+            contract_code: contract code,such as BTC-USDT-200508-C-8800.
+            trigger_type: trigger type,such as ge,le.
+            trigger_price: trigger price.
+            order_price: order price.
+            order_price_type: "limit" by default."optimal_5"\"optimal_10"\"optimal_20"
+            volume: volume.
+            direction: "buy" or "sell".
+            offset: "open" or "close".
+        
+        Returns:
+            refer to https://huobiapi.github.io/docs/option/v1/cn/#03b4e6fa59
+
+        """
+        uri = "/option-api/v1/option_trigger_order"
+        body = {
+            "contract_code": contract_code,
+            "trigger_type": trigger_type,
+            "trigger_price": trigger_price,
+            "order_price": order_price,
+            "order_price_type": order_price_type,
+            "volume": volume,
+            "direction": direction,
+            "offset": offset
+        }
+
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+    
+    async def revoke_trigger_order(self, symbol, order_id, trade_partition=None):
+        """ Revoke trigger order
+
+        Args: 
+            symbol: symbol,such as "BTC".
+            trade_partition: such as "USDT".
+            order_id: order ids.multiple orders need to be joined by ','.
+
+        Returns:
+            refer to https://huobiapi.github.io/docs/option/v1/cn/#03b4e6fa59
+
+        """
+        uri = "/option-api/v1/option_trigger_cancel"
+        body = {
+            "symbol": symbol,
+            "order_id": order_id
+        }
+        if trade_partition:
+            body.update({"trade_partition": trade_partition})
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+    
+    async def revoke_all_trigger_orders(self, symbol, trade_partition=None, contract_code=None, contract_type=None):
+        """ Revoke all trigger orders
+
+        Args:
+            symbol: symbol, such as "BTC"
+            trade_partition: such as "USDT".
+            contract_code: contract_code, such as BTC-USDT-200508-C-8800.
+            contract_type: contract_type, such as this_week, next_week, quarter.
+        
+        Returns:
+            refer to https://huobiapi.github.io/docs/option/v1/cn/#2857693297
+
+        """
+        uri = "/option-api/v1/option_trigger_cancelall"
+        body = {
+            "symbol": symbol
+        }
+
+        if trade_partition:
+            body.update({"trade_partition": trade_partition})
+        if contract_code:
+            body.update({"contract_code": contract_code})
+        if contract_type:
+            body.update({"contract_type": contract_type})
+
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+    
+    async def get_trigger_openorders(self, symbol, trade_partition=None, contract_code=None, page_index=None, page_size=None):
+        """ Get trigger openorders
+        Args: 
+            symbol: symbol, such as "BTC"
+            trade_partition: such as "USDT".
+            contract_code: contract code, such as BTC180914.
+            page_index: page index.1 by default.
+            page_size: page size.20 by default.
+        
+        Returns: 
+            refer to https://huobiapi.github.io/docs/option/v1/cn/#362fe20088
+        """
+
+        uri = "/option-api/v1/option_trigger_openorders"
+        body = {
+            "symbol": symbol,
+        }
+        if trade_partition:
+            body.update({"trade_partition": trade_partition})
+        if contract_code:
+            body.update({"contract_code": contract_code})
+        if page_index:
+            body.update({"page_index": page_index})
+        if page_size:
+            body.update({"page_size": page_size})
+        
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+    
+    async def get_trigger_hisorders(self, symbol, trade_type, status, create_date, trade_partition=None, contract_code=None, page_index=None, page_size=None):
+        """ Get trigger hisorders
+        
+        Args:
+            symbol: symbol,such as "BTC"
+            trade_partition: such as "USDT".
+            contract_code: contract code.
+            trade_type: trade type. 0:all 1:open buy 2:open sell 3:close buy 4:close sell
+            status: status. 0: orders finished. 4: orders submitted. 5: order filled. 6:order cancelled. multiple status is joined by ','
+            create_date: days. such as 1-90.
+            page_index: 1 by default.
+            page_size: 20 by default.50 at most.
+
+        Returns:
+            https://huobiapi.github.io/docs/option/v1/cn/#37aeb9f3bd
+
+        """
+
+        uri = "/option-api/v1/option_trigger_hisorders"
+        body = {
+            "symbol": symbol,
+            "trade_type": trade_type,
+            "status": status,
+            "create_date": create_date,
+        }
+
+        if trade_partition:
+            body.update({"trade_partition": trade_partition})
+        if contract_code:
+            body.update({"contract_code": contract_code})
+        if page_index:
+            body.update({"page_index": page_index})
+        if page_size:
+            body.update({"page_size": page_size})
+        
+        success, error = await self.request("POST", uri, body=body, auth=True)
+        return success, error
+    
 
     async def transfer_between_spot_option(self,  symbol, amount, from_, to, tradePartition="USDT"):
         """ Do transfer between spot and option.
