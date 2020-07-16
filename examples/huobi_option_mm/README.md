@@ -8,7 +8,7 @@ i. 假设期权BTC总delta为 `Do`,期权的持仓(BTC)账户权益(margin_balan
 
             Do = Dp + Mo
 
-ii. 假设火币永续合约BTC总delta为`Ds`,的账户权益(BTC)（margin_balance）为`Ms`,持有的多仓(BTC)张数为`Ls`,持有的空仓(BTC)张数为`Ss`，当前BTC最新价为`Ps`,则:
+ii. 假设火币永续合约BTC总delta为`Ds`,账户权益(BTC)（margin_balance）为`Ms`,持有的多仓(BTC)张数为`Ls`,持有的空仓(BTC)张数为`Ss`，当前BTC最新价为`Ps`,则:
 
             Ds = Ms + Ls*100/Ps - Ss*100/Ps
 
