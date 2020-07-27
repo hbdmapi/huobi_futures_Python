@@ -143,7 +143,7 @@ class HuobiSwapTrade(Websocket):
         return self._rest_api
 
     async def _send_heartbeat_msg(self, *args, **kwargs):
-        data = {"pong": int(time.time()*1000)}
+        data = {"op": "pong", "ts": str(int(time.time()*1000))}
         if not self.ws:
             logger.error("Websocket connection not yeah!", caller=self)
             return
