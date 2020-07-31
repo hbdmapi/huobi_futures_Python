@@ -184,6 +184,9 @@ class HuobiSwapTrade(Websocket):
             logger.error(e, caller=self)
             SingleTask.run(self._init_success_callback, False, e)
             return
+        self._subscribe_order_ok = False
+        self._subscribe_position_ok = False
+        self._subscribe_asset_ok = False
 
         # subscribe order
         data = {
@@ -300,9 +303,9 @@ class HuobiSwapTrade(Websocket):
             order_price_type = "optimal_20"
         elif order_type == ORDER_TYPE_MAKER:
             order_price_type = "post_only"
-        elif order_price_type == ORDER_TYPE_FOK:
+        elif order_type == ORDER_TYPE_FOK:
             order_price_type = "fok"
-        elif order_price_type == ORDER_TYPE_IOC:
+        elif order_type == ORDER_TYPE_IOC:
             order_price_type = "ioc"
 
         else:

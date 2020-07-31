@@ -11,7 +11,7 @@ Email:  andyjoe318@gmail.com
 from collections import deque
 
 # Version
-VERSION = "1.0.14_200727_alpha"
+VERSION = "1.0.15_200731_alpha"
 
 # Exchange Names
 HUOBI_SWAP = "huobi_swap"  # Huobi Swap https://huobiapi.github.io/docs/coin_margined_swap/v1/cn/
