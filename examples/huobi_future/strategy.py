@@ -47,7 +47,7 @@ class MyStrategy:
         self.trades_length = config.markets[0]["trades_length"]
         self.market_wss = config.markets[0]["wss"]
 
-        self.orderbook_invalid_seconds = 100
+        self.orderbook_invalid_seconds = 5
 
         self.last_bid_price = 0 # 上次的买入价格
         self.last_ask_price = 0 # 上次的卖出价格
