@@ -234,7 +234,7 @@ class HuobiOptionTrade(Websocket):
                 for order_info in success["data"]["orders"]:
                     order_info["ts"] = order_info["created_at"]
                     self._update_order(order_info)
-            SingleTask.run(self._init_success_callback, True, None)
+                SingleTask.run(self._init_success_callback, True, None)
 
     @async_method_locker("HuobiOptionTrade.process_binary.locker")
     async def process_binary(self, raw):
@@ -303,9 +303,9 @@ class HuobiOptionTrade(Websocket):
             order_price_type = "optimal_20"
         elif order_type == ORDER_TYPE_MAKER:
             order_price_type = "post_only"
-        elif order_price_type == ORDER_TYPE_FOK:
+        elif order_type == ORDER_TYPE_FOK:
             order_price_type = "fok"
-        elif order_price_type == ORDER_TYPE_IOC:
+        elif order_type == ORDER_TYPE_IOC:
             order_price_type = "ioc"
 
         else:

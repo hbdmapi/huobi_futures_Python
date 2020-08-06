@@ -228,10 +228,11 @@ class HuobiFutureTrade(Websocket):
             if error:
                 e = Error("get open orders failed!")
                 SingleTask.run(self._init_success_callback, False, e)
-            for order_info in success["data"]["orders"]:
-                order_info["ts"] = order_info["created_at"]
-                self._update_order(order_info)
-            SingleTask.run(self._init_success_callback, True, None)
+            elif "data" in success and "orders" in success["data"]:
+                for order_info in success["data"]["orders"]:
+                    order_info["ts"] = order_info["created_at"]
+                    self._update_order(order_info)
+                SingleTask.run(self._init_success_callback, True, None)
 
     @async_method_locker("HuobiFutureTrade.process_binary.locker")
     async def process_binary(self, raw):
