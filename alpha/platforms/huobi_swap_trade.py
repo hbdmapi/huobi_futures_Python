@@ -235,6 +235,10 @@ class HuobiSwapTrade(Websocket):
                     order_info["ts"] = order_info["created_at"]
                     self._update_order(order_info)
                 SingleTask.run(self._init_success_callback, True, None)
+            else:
+                logger.warn("get open orders:", success, caller=self)
+                e = Error("Get Open Orders Unknown error")
+                SingleTask.run(self._init_success_callback, False, e)
 
     @async_method_locker("HuobiSwapTrade.process_binary.locker")
     async def process_binary(self, raw):
