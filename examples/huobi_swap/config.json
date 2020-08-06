@@ -2,7 +2,7 @@
     "SERVER_ID": "swap_maker_strategy",
     "LOG": {
         "console": true,
-        "level": "INFO",
+        "level": "DEBUG",
         "path": "/data/logs/servers/swap_maker_strategy",
         "name": "swap_maker_strategy.log",
         "clear": true,
@@ -14,8 +14,8 @@
             "account": "account",
             "host": "https://api.hbdm.vn",
             "wss": "wss://api.hbdm.vn",
-            "access_key": "access_key",
-            "secret_key": "secret_key"
+            "access_key": "",
+            "secret_key": ""
         }
     ],
     "MARKETS": [
