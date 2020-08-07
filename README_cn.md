@@ -25,9 +25,11 @@
 ## 安装环境
     python:python 3.5.3以上版本。
     git clone https://github.com/hbdmapi/hbdm_Python.git
-    pip install . --ignore-installed
+    pip install git+https://github.com/hbdmapi/hbdm_Python.git
 
 ## 快速使用Examples中Demo
+   - git clone https://github.com/hbdmapi/hbdm_Python.git
+   - cd hbdm_Python 
    - 修改Example目录下的config.json
      - "access_key": "填入您在火币合约的api access_key"
      - "secret_key": "填入您在火币合约的api secret_key"

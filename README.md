@@ -28,10 +28,11 @@
     
 ## Install Steps
     python:python 3.5.3 above
-    git clone https://github.com/hbdmapi/hbdm_Python.git
-    pip install . --ignore-installed
+    pip install git+https://github.com/hbdmapi/hbdm_Python.git
 
 ## Quick Start
+   - git clone https://github.com/hbdmapi/hbdm_Python.git
+   - cd hbdm_Python 
    - cd examples
    - cd huobi_swap
    - edit "config.json"
