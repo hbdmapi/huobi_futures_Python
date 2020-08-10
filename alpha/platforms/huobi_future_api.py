@@ -110,6 +110,32 @@ class HuobiFutureRestAPI:
         success, error = await self.request("GET", uri, params=params)
         return success, error
 
+    async def get_klines(self, symbol, period, size=None, sfrom=None, to=None):
+        """ Get kline information.
+
+        Args:
+            symbol: Symbol name, `BTC_CW` - current week, `BTC_NW` next week, `BTC_CQ` current quarter.
+            period: 1min, 5min, 15min, 30min, 60min,4hour,1day, 1mon
+            size: [1,2000]
+
+        Returns:
+            success: Success results, otherwise it's None.
+            error: Error information, otherwise it's None.
+        """
+        uri = "/market/history/kline"
+        params = {
+            "symbol": symbol,
+            "period": period
+        }
+        if size:
+            params["size"] = size
+        if sfrom:
+            params["from"] = sfrom
+        if to:
+            params["to"] = to
+        success, error = await self.request("GET", uri, params=params)
+        return success, error
+
     async def get_asset_info(self):
         """ Get account asset information.
 
