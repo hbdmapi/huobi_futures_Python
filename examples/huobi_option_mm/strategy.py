@@ -273,10 +273,11 @@ class MyStrategy:
             for item in assets["data"]:
                 if item["symbol"] == self.raw_symbol:
                     o_margin_balance = item["margin_balance"]
-                    o_delta = item["delta"]
-                    o_gamma = item["gamma"]
-                    o_theta = item["theta"]
-                    o_vega = item["vega"]
+                    o_delta = item["delta"] if item["delta"] else 0
+                    o_gamma = item["gamma"] if item["gamma"] else 0
+                    o_theta = item["theta"] if item["theta"] else 0
+                    o_vega = item["vega"] if item["vega"] else 0
+                    
                     option_delta = o_delta + o_margin_balance
             
             #增加delta对冲，使用期货对冲。 
