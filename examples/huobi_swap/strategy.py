@@ -94,9 +94,42 @@ class MyStrategy:
             "trade_update_callback": self.on_event_trade_update
         }
         self.market = Market(**cc)
+
+        future_cc = {
+            "strategy": self.strategy,
+            "platform": "huobi_future",
+            "symbol": "BTC",
+            "contract_type": "quarter",
+            "account": "test",
+            "access_key": self.access_key,
+            "secret_key": self.secret_key,
+            "host": self.host,
+            "wss": self.wss,
+            "order_update_callback": self.on_event_order_update,
+            "asset_update_callback": self.on_event_asset_update,
+            "position_update_callback": self.on_event_position_update,
+            "init_success_callback": self.on_event_init_success_callback,
+        }
+        self.future_trader = Trade(**future_cc)
+
+        # 行情模块
+        market_cc = {
+            "platform": "huobi_future",
+            "symbols": ["BTC_CQ"],
+            "channels": ["orderbook"],
+            "orderbook_length": self.orderbook_length,
+            "orderbooks_length": self.orderbooks_length,
+            "klines_length": self.klines_length,
+            "trades_length": self.trades_length,
+            "wss": self.market_wss,
+            "orderbook_update_callback": self.on_event_orderbook_update,
+            "kline_update_callback": self.on_event_kline_update,
+            "trade_update_callback": self.on_event_trade_update
+        }
+        self.future_market = Market(**market_cc)
         
         # 1秒执行1次
-        LoopRunTask.register(self.on_ticker, 2)
+        LoopRunTask.register(self.on_ticker, 100)
 
     async def on_ticker(self, *args, **kwargs):
         """ 定时执行任务
@@ -167,17 +200,17 @@ class MyStrategy:
     async def on_event_order_update(self, order: Order):
         """ 订单状态更新
         """
-        logger.debug("order update:", order, caller=self)
+        logger.info("order update:", order, caller=self)
 
     async def on_event_asset_update(self, asset: Asset):
         """ 资产更新
         """
-        logger.debug("asset update:", asset, caller=self)
+        logger.info("asset update:", asset, caller=self)
 
     async def on_event_position_update(self, position: Position):
         """ 仓位更新
         """
-        logger.debug("position update:", position, caller=self)
+        logger.info("position update:", position, caller=self)
     
     async def on_event_kline_update(self, kline: Kline):
         """ kline更新
