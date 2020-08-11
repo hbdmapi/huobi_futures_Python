@@ -85,10 +85,11 @@ Strategy config file [config.json](config.json):
 python main.py config.json
 ```
 
-## Suggestions and Bugs
+## Issues
 
 Pls post your suggestions and bugs in [issues](https://github.com/hbdmapi/hbdm_Python/issues)
 
-## Reference
-TheNextQuant
+## What Users Say
+
+igkoh(MM): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
 

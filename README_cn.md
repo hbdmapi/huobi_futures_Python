@@ -78,10 +78,10 @@ ProjectName
 python main.py config.json
 ```
 
-## 功能意见征集及BUG反馈
+## 问题反馈
 
 issue区发帖提问，请务必贴上完整描述以及完整log。
 
-## 参考
-TheNextQuant
+## 看看用户怎么说
 
+igkoh(MM): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
