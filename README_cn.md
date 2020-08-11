@@ -80,8 +80,8 @@ python main.py config.json
 
 ## 问题反馈
 
-issue区发帖提问，请务必贴上完整描述以及完整log。
+issue区发帖提问，请务必详细描述问题以及附上完整log。
 
-## 看看用户怎么说
+## 用户评价
 
 igkoh(MM): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
