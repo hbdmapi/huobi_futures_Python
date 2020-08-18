@@ -4,7 +4,7 @@
 
 ## delta计算
 
-i. 假设期权BTC总delta为 `Do`,期权的持仓(BTC)账户权益(margin_balance)为`Mo`,获取到的期权的持仓(BTC)delta为 `Dp`，则:
+i. 假设期权BTC总delta为 `Do`,期权的持仓(BTC)账户权益(margin_balance)为`Mo`（期权的账户权益在行权前均等于静态权益）,获取到的期权的持仓(BTC)delta为 `Dp`，则:
 
             Do = Dp + Mo
 
