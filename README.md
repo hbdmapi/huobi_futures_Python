@@ -6,15 +6,15 @@
 ![Architecture](https://raw.githubusercontent.com/hbdmapi/hbdm_Python/master/docs/framework.png)
 
    ### 1、Market Module
-    Realtime Orderbook、kline、market trade details are subscribed by websocket for strategies callback.Huobi Swap and Huobi Future has been integrated.
+    Realtime Orderbook、kline、market trade details are subscribed by websocket for strategies callback.Huobi Swap,Huobi Future and Huobi Option have been integrated.
    ### 2、RestFul API Module
-    APIs of Huobi Swap and Huobi Future has been integrated such as trade api、batch trade api、cancel api,etc. 
+    APIs of Huobi Swap, Huobi Future and Huobi Option have been integrated such as trade api、batch trade api、cancel api,etc. 
    ### 3、Asset Module
-    Assets are subscribed by websocket for strategies callback.Huobi Swap and Huobi Future has been integrated.
+    Assets are subscribed by websocket for strategies callback.Huobi Swap, Huobi Future and Huobi Option have been integrated.
    ### 4、Position Module
-    Positions are subscribed by websocket for strategies callback.Huobi Swap and Huobi Future has been integrated.
+    Positions are subscribed by websocket for strategies callback.Huobi Swap, Huobi Future and Huobi Option have been integrated.
    ### 5、Order Module
-    Orders are subscribed by websocket for strategies callback.Huobi Swap and Huobi Future has been integrated.
+    Orders are subscribed by websocket for strategies callback.Huobi Swap, Huobi Future and Huobi Option have been integrated.
    ### 6、Logging Module
     Logs can log to files corresponding to different levels such as "DEBUG","INFO","WARN", "ERROR".
    ### 7、Trading Module
