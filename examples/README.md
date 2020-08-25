@@ -12,6 +12,10 @@
 bash run.sh
 就可以看到行情、订单、账户等信息等推送以及下撤单等功能的演示；
 
+# 风险提示
+
+demo仅供学习演示使用，请勿用做正式用途，投资有风险！
+
 # 帮助
 
 有使用问题请在https://github.com/hbdmapi/hbdm_Python/issues 发帖提问；
