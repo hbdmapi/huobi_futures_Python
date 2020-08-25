@@ -101,12 +101,14 @@ class MyStrategy:
         }
         self.market = Market(**cc)
         
-        # 2秒执行1次
-        LoopRunTask.register(self.on_ticker, 2)
+        # 60秒执行1次
+        LoopRunTask.register(self.on_ticker, 60)
 
     async def on_ticker(self, *args, **kwargs):
         """ 定时执行任务
         """
+        success ,error = await self.trader.rest_api.get_hisopen_orders("ETH")
+        import ipdb;ipdb.set_trace()
         ts_diff = int(time.time()*1000) - self.last_orderbook_timestamp
         if ts_diff > self.orderbook_invalid_seconds * 1000:
             logger.warn("received orderbook timestamp exceed:", self.strategy, self.symbol, ts_diff, caller=self)
