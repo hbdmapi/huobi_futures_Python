@@ -239,8 +239,7 @@ class MyStrategy:
                     if quantity:
                         orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT })
                         self.last_mark_price = self.mark_price
-
-        if self.trader.assets and self.trader.assets.assets.get(self.partition_symbol).get("free"):
+        if self.trader.assets and self.trader.assets.assets.get(self.partition_symbol) and self.trader.assets.assets.get(self.partition_symbol).get("free"):
             # 开多单
             if self.trader.position and  self.trader.position.long_quantity and self.trader.position.long_quantity >= self.max_quantity:
                 logger.warn("option long position exceeds the max quantity: ", self.symbol, self.trader.position.long_quantity, self.max_quantity, caller=self)

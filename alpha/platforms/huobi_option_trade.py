@@ -549,14 +549,14 @@ class HuobiOptionTrade(Websocket):
             total = float(item["margin_balance"])
             free = float(item["margin_available"])
             locked = float(item["margin_frozen"])
-            premium_frozen = float(item.get("premium_frozen", 0))
-            premium_in = float(item.get("premium_in", 0))
-            premium_out = float(item.get("premium_out", 0))
-            delta = float(item.get("delta", 0))
-            gamma = float(item.get("gamma", 0))
-            theta = float(item.get("theta", 0))
-            vega = float(item.get("vega", 0))
-            option_value = float(item["option_value"])
+            premium_frozen = float(item.get("premium_frozen")) if item.get("premium_frozen") else 0.0
+            premium_in = float(item.get("premium_in")) if item.get("premium_in") else 0.0
+            premium_out = float(item.get("premium_out")) if item.get("premium_out") else 0.0
+            delta = float(item.get("delta")) if item.get("delta") else 0.0
+            gamma = float(item.get("gamma")) if item.get("gamma") else 0.0
+            theta = float(item.get("theta")) if item.get("theta") else 0.0
+            vega = float(item.get("vega")) if item.get("vega") else 0.0
+            option_value = float(item.get("option_value")) if item.get("option_value") else 0.0
             if total > 0:
                 assets[symbol] = {
                     "total": "%.8f" % total,
