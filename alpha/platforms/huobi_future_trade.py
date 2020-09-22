@@ -525,10 +525,10 @@ class HuobiFutureTrade(Websocket):
                 continue
             if position_info["direction"] == "buy":
                 self._position.long_quantity = int(position_info["volume"])
-                self._position.long_avg_price = position_info["cost_hold"]
+                self._position.long_avg_price = position_info["cost_open"]
             else:
                 self._position.short_quantity = int(position_info["volume"])
-                self._position.short_avg_price = position_info["cost_hold"]
+                self._position.short_avg_price = position_info["cost_open"]
             # self._position.liquid_price = None
             self._position.utime = data["ts"]
             SingleTask.run(self._position_update_callback, copy.copy(self._position))
