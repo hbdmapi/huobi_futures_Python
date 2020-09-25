@@ -164,8 +164,7 @@ class HuobiUsdtSwapTrade(Websocket):
         await self.ws.send_json(data)
     
     def generate_signature(self, method, params, request_path):
-        #host_url = urllib.parse.urlparse(self._wss).hostname.lower()
-        host_url = "172.18.6.99"
+        host_url = urllib.parse.urlparse(self._wss).hostname.lower()
         sorted_params = sorted(params.items(), key=lambda d: d[0], reverse=False)
         encode_params = urllib.parse.urlencode(sorted_params)
         payload = [method, host_url, request_path, encode_params]

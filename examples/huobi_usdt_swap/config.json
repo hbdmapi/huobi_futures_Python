@@ -1,0 +1,38 @@
+{
+    "SERVER_ID": "swap_maker_strategy",
+    "LOG": {
+        "console": true,
+        "level": "DEBUG",
+        "path": "/data/logs/servers/swap_maker_strategy",
+        "name": "swap_maker_strategy.log",
+        "clear": true,
+        "backup_count": 5
+    },
+    "ACCOUNTS": [
+        {
+            "platform": "huobi_usdt_swap",
+            "account": "account",
+            "host": "https://api.hbdm.vn",
+            "wss": "wss://api.hbdm.vn",
+            "access_key": "access key",
+            "secret_key": "secret key"
+        }
+    ],
+    "MARKETS": [
+        {
+            "platform": "huobi_usdt_swap",
+            "channels":[
+                "orderbook", "kline", "trade"
+            ],
+            "orderbook_length": 10,
+            "orderbooks_length": 100,
+            "klines_length": 100,
+            "trades_length": 100,
+            "wss": "wss://api.hbdm.vn"
+
+        }
+    ],
+    "strategy": "my_test_strategy",
+    "symbol": "BTC-USDT",
+    "contract_type": "USDTSWAP"
+}
