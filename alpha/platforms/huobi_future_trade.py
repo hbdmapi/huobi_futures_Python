@@ -475,6 +475,7 @@ class HuobiFutureTrade(Websocket):
                 "account": self._account,
                 "strategy": self._strategy,
                 "order_no": order_no,
+                "order_type": order_info["order_type"],
                 "action": ORDER_ACTION_BUY if order_info["direction"] == "buy" else ORDER_ACTION_SELL,
                 "symbol": self._symbol + '/' + self._contract_type,
                 "price": order_info["price"],
