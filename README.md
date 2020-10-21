@@ -91,5 +91,5 @@ Pls post your suggestions and bugs in [issues](https://github.com/hbdmapi/hbdm_P
 
 ## What Users Say
 
-igkoh(MM): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
+igkoh(Ph.D. theoretical physics, Professor at Korea Advanced Institute of Science and Technology): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
 
