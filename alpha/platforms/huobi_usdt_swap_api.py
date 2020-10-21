@@ -443,21 +443,23 @@ class HuobiUsdtSwapRestAPI:
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
-    async def transfer_between_spot_swap(self,  symbol, amount, from_, to):
+    async def transfer_between_spot_swap(self, margin_account, amount, from_, to,  currency="USDT"):
         """ Do transfer between spot and future.
         Args:
-            symbol: currency,such as btc,eth,etc.
             amount: transfer amount.pls note the precision digit is 8.
             from_: 'spot' or 'linear-swap'
             to: 'spot' or 'linear-swap'
+            currency: "usdt",
+            margin-account: "BTC-USDT"
             
         """
         body = {
-                "currency": symbol,
-                "amount": amount,
                 "from": from_,
-                "to": to
-                }
+                "to": to,
+                "amount": amount,
+                "margin-account": margin_account,
+                "currency": currency,
+            }
 
         uri = "https://api.huobi.pro/v2/account/transfer"
         success, error = await self.request("POST", uri, body=body, auth=True)
