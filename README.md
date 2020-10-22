@@ -28,11 +28,11 @@
     
 ## Install Steps
     python:python 3.5.3 above
-    pip install git+https://github.com/hbdmapi/hbdm_Python.git
+    pip install git+https://github.com/hbdmapi/huobi_futures_Python.git
 
 ## Quick Start
-   - git clone https://github.com/hbdmapi/hbdm_Python.git
-   - cd hbdm_Python 
+   - git clone https://github.com/hbdmapi/huobi_futures_Python.git
+   - cd huobi_futures_Python 
    - cd examples
    - cd huobi_swap
    - edit "config.json"
@@ -87,7 +87,7 @@ python main.py config.json
 
 ## Issues
 
-Pls post your suggestions and bugs in [issues](https://github.com/hbdmapi/hbdm_Python/issues)
+Pls post your suggestions and bugs in [issues](https://github.com/hbdmapi/huobi_futures_Python/issues)
 
 ## What Users Say
 
