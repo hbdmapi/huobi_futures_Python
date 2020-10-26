@@ -489,8 +489,9 @@ class HuobiFutureTrade(Websocket):
             order = Order(**info)
             self._orders[order_no] = order
         
-        for trade in order_info.get("trade"):
-            order.role = trade.get("role")
+        if order_info.get("trade"):
+            for trade in order_info.get("trade"):
+                order.role = trade.get("role")
 
         if status in [1, 2, 3]:
             order.status = ORDER_STATUS_SUBMITTED

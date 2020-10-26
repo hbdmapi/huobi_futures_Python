@@ -88,10 +88,12 @@ class Order:
         info = "[platform: {platform}, account: {account}, strategy: {strategy}, order_no: {order_no}, " \
                "action: {action}, symbol: {symbol}, price: {price}, quantity: {quantity}, remain: {remain}, " \
                "status: {status}, avg_price: {avg_price}, order_type: {order_type}, trade_type: {trade_type}, " \
+               "client_order_id: {client_order_id}, order_price_type:{order_price_type}, role: {role}," \
                "ctime: {ctime}, utime: {utime}]".format(
             platform=self.platform, account=self.account, strategy=self.strategy, order_no=self.order_no,
             action=self.action, symbol=self.symbol, price=self.price, quantity=self.quantity,
             remain=self.remain, status=self.status, avg_price=self.avg_price, order_type=self.order_type,
+            client_order_id=self.client_order_id, order_price_type=self.order_price_type, role=self.role, 
             trade_type=self.trade_type, ctime=self.ctime, utime=self.utime)
         return info
 
