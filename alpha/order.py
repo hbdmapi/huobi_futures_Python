@@ -55,13 +55,16 @@ class Order:
         avg_price: Average price that filled.
         order_type: Order type.
         trade_type: Trade type, only for future order.
+        client_order_id: custom order id.
+        order_price_type: order type.such as "limit","opponent","lightning","optimal_5"...
+        role: taker or maker for the latest trade.
         ctime: Order create time, millisecond.
         utime: Order update time, millisecond.
     """
 
     def __init__(self, account=None, platform=None, strategy=None, order_no=None, symbol=None, action=None, price=0,
                  quantity=0, remain=0, status=ORDER_STATUS_NONE, avg_price=0, order_type=ORDER_TYPE_LIMIT,
-                 trade_type=TRADE_TYPE_NONE, ctime=None, utime=None):
+                 trade_type=TRADE_TYPE_NONE, client_order_id=None, order_price_type=None, role=None, ctime=None, utime=None):
         self.platform = platform
         self.account = account
         self.strategy = strategy
@@ -75,6 +78,9 @@ class Order:
         self.status = status
         self.avg_price = avg_price
         self.trade_type = trade_type
+        self.client_order_id = client_order_id
+        self.order_price_type = order_price_type
+        self.role = role
         self.ctime = ctime if ctime else tools.get_cur_timestamp_ms()
         self.utime = utime if utime else tools.get_cur_timestamp_ms()
 

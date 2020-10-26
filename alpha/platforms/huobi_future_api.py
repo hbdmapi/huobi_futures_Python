@@ -195,15 +195,18 @@ class HuobiFutureRestAPI:
         """
         uri = "/api/v1/contract_order_info"
         body = {
-            "symbol": symbol,
-            "order_id": ",".join(order_ids),
-            "client_order_id": ",".join(client_order_ids)
+            "symbol": symbol
         }
+        if order_ids:
+            body.update({"order_id": ",".join(order_ids)})
+        if client_order_ids:
+            body.update({"client_order_id": ",".join(client_order_ids)})
+
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
     async def create_order(self, symbol, contract_type, contract_code, price, quantity, direction, offset, lever_rate,
-                           order_price_type):
+                           order_price_type, client_order_id=None):
         """ Create an new order.
 
         Args:
@@ -233,6 +236,10 @@ class HuobiFutureRestAPI:
             "lever_rate": lever_rate,
             "order_price_type": order_price_type
         }
+
+        if client_order_id:
+            body.update({"client_order_id": client_order_id})
+
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
     
@@ -254,12 +261,13 @@ class HuobiFutureRestAPI:
         return success, error
         
 
-    async def revoke_order(self, symbol, order_id):
+    async def revoke_order(self, symbol, order_id=None, client_order_id=None):
         """ Revoke an order.
 
         Args:
             symbol: Currency name, e.g. BTC.
             order_id: Order ID.
+            client_order_id: Custom Order ID.
 
         Returns:
             success: Success results, otherwise it's None.
@@ -267,18 +275,23 @@ class HuobiFutureRestAPI:
         """
         uri = "/api/v1/contract_cancel"
         body = {
-            "symbol": symbol,
-            "order_id": order_id
+            "symbol": symbol
         }
+        if order_id:
+            body["order_id"] = order_id
+        if client_order_id:
+            body["client_order_id"] = client_order_id
+        
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
-    async def revoke_orders(self, symbol, order_ids):
+    async def revoke_orders(self, symbol, order_ids=None, client_order_ids=None):
         """ Revoke multiple orders.
 
         Args:
             symbol: Currency name, e.g. BTC.
             order_ids: Order ID list.
+            client_order_ids: Client Order Ids.
 
         Returns:
             success: Success results, otherwise it's None.
@@ -286,9 +299,13 @@ class HuobiFutureRestAPI:
         """
         uri = "/api/v1/contract_cancel"
         body = {
-            "symbol": symbol,
-            "order_id": ",".join(order_ids)
+            "symbol": symbol
         }
+        if order_ids:
+            body["order_id"] = ",".join(order_ids)
+        if client_order_ids:
+            body["client_order_id"] = ",".join(client_order_ids)
+        
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
@@ -318,12 +335,13 @@ class HuobiFutureRestAPI:
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
-    async def get_order_info(self, symbol, order_ids):
+    async def get_order_info(self, symbol, order_ids=None, client_order_ids=None):
         """ Get order information.
 
         Args:
             symbol: Currency name, e.g. BTC.
             order_ids: Order ID list. (different IDs are separated by ",", maximum 20 orders can be withdrew at one time.)
+            client_order_ids: Client order ID list.(Invalid for 24 hours.)
 
         Returns:
             success: Success results, otherwise it's None.
@@ -331,9 +349,14 @@ class HuobiFutureRestAPI:
         """
         uri = "/api/v1/contract_order_info"
         body = {
-            "symbol": symbol,
-            "order_id": ",".join(order_ids)
+            "symbol": symbol
         }
+
+        if order_ids:
+            body["order_id"] = ",".join(order_ids)
+        if client_order_ids:
+            body["client_order_id"] = ",".join(client_order_ids)
+
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 

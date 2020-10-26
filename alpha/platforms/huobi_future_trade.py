@@ -265,7 +265,7 @@ class HuobiFutureTrade(Websocket):
             elif data["topic"].startswith("accounts"):
                 self._update_asset(data)
 
-    async def create_order(self, action, price, quantity, order_type=ORDER_TYPE_LIMIT, *args, **kwargs):
+    async def create_order(self, action, price, quantity, order_type=ORDER_TYPE_LIMIT, client_order_id=None, *args, **kwargs):
         """ Create an order.
 
         Args:
@@ -317,7 +317,7 @@ class HuobiFutureTrade(Websocket):
         quantity = abs(int(quantity))
         result, error = await self._rest_api.create_order(self._symbol, self._contract_type, '',
                                                           price, quantity, direction, offset, lever_rate,
-                                                          order_price_type)
+                                                          order_price_type, client_order_id)
         if error:
             return None, error
         return str(result["data"]["order_id"]), None
@@ -376,8 +376,10 @@ class HuobiFutureTrade(Websocket):
 
             quantity = abs(int(order["quantity"]))
 
+            client_order_id = order.get("client_order_id", "")
+
             orders_data.append({"symbol": self._symbol, "contract_type": self._contract_type, "contract_code": "", \
-                    "client_order_id": "", "price": order["price"], "volume": quantity, "direction": direction, "offset": offset, \
+                    "client_order_id": client_order_id, "price": order["price"], "volume": quantity, "direction": direction, "offset": offset, \
                     "leverRate": lever_rate, "orderPriceType":  order_price_type})
 
         result, error = await self._rest_api.create_orders({"orders_data": orders_data})
@@ -475,6 +477,8 @@ class HuobiFutureTrade(Websocket):
                 "account": self._account,
                 "strategy": self._strategy,
                 "order_no": order_no,
+                "client_order_id": order_info.get("client_order_id"),
+                "order_price_type": order_info.get("order_price_type"),
                 "order_type": order_info["order_type"],
                 "action": ORDER_ACTION_BUY if order_info["direction"] == "buy" else ORDER_ACTION_SELL,
                 "symbol": self._symbol + '/' + self._contract_type,
@@ -484,6 +488,9 @@ class HuobiFutureTrade(Websocket):
             }
             order = Order(**info)
             self._orders[order_no] = order
+        
+        for trade in order_info.get("trade"):
+            order.role = trade.get("role")
 
         if status in [1, 2, 3]:
             order.status = ORDER_STATUS_SUBMITTED
