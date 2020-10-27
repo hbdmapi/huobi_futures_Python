@@ -197,6 +197,7 @@ class HuobiFutureRestAPI:
         body = {
             "symbol": symbol
         }
+
         if order_ids:
             body.update({"order_id": ",".join(order_ids)})
         if client_order_ids:

@@ -235,6 +235,7 @@ class HuobiUsdtSwapRestAPI:
         }
         if client_order_id:
             body.update({"client_order_id": client_order_id})
+        
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
     
@@ -256,7 +257,7 @@ class HuobiUsdtSwapRestAPI:
         return success, error
         
 
-    async def revoke_order(self, contract_code, order_id="", client_order_id=""):
+    async def revoke_order(self, contract_code, order_id=None, client_order_id=None):
         """ Revoke an order.
 
         Args:
@@ -269,14 +270,17 @@ class HuobiUsdtSwapRestAPI:
         """
         uri = "/linear-swap-api/v1/swap_cancel"
         body = {
-            "contract_code": contract_code,
-            "order_id": order_id,
-            "client_order_id": client_order_id
+            "contract_code": contract_code
         }
+        if order_id:
+            body["order_id"] = order_id
+        if client_order_id:
+            body["client_order_id"] = client_order_id
+
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
-    async def revoke_orders(self, contract_code, order_ids=[], client_order_ids=[]):
+    async def revoke_orders(self, contract_code, order_ids=None, client_order_ids=None):
         """ Revoke multiple orders.
 
         Args:
@@ -289,10 +293,13 @@ class HuobiUsdtSwapRestAPI:
         """
         uri = "/linear-swap-api/v1/swap_cancel"
         body = {
-            "contract_code": contract_code,
-            "order_id": ",".join(order_ids),
-            "client_order_id": ",".join(client_order_ids)
+            "contract_code": contract_code
         }
+        if order_ids:
+            body["order_id"] = ",".join(order_ids)
+        if client_order_ids:
+            body["client_order_id"] = ",".join(client_order_ids)
+
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
@@ -316,7 +323,7 @@ class HuobiUsdtSwapRestAPI:
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
 
-    async def get_order_info(self, contract_code, order_ids=[], client_order_ids=[]):
+    async def get_order_info(self, contract_code, order_ids=None, client_order_ids=None):
         """ Get order information.
 
         Args:
@@ -330,10 +337,14 @@ class HuobiUsdtSwapRestAPI:
         """
         uri = "/linear-swap-api/v1/swap_order_info"
         body = {
-            "contract_code": contract_code,
-            "order_id": ",".join(order_ids),
-            "client_order_id": ",".join(client_order_ids)
+            "contract_code": contract_code
         }
+
+        if order_ids:
+            body.update({"order_id": ",".join(order_ids)})
+        if client_order_ids:
+            body.update({"client_order_id": ",".join(client_order_ids)})
+
         success, error = await self.request("POST", uri, body=body, auth=True)
         return success, error
     
