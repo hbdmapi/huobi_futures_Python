@@ -91,5 +91,5 @@ Pls post your suggestions and bugs in [issues](https://github.com/hbdmapi/huobi_
 
 ## What Users Say
 
-igkoh(Ph.D. theoretical physics, Professor at Korea Advanced Institute of Science and Technology): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
+Ingyu Koh(Former IBM scientist, Professor at Korea Advanced Institute of Science and Technology, Ph.D in theoretical physics): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
 
