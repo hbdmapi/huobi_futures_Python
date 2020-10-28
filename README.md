@@ -71,7 +71,7 @@ ProjectName
 
 Strategy config file [config.json](config.json):
 
-- ACCOUNTS `list` your hdbm account name；
+- ACCOUNTS `list` your huobi account name；
 - strategy `string` your strategy name;
 - symbol `string` the trade code,such as BTC-USD
 - MARKETS `list` the market config.
@@ -91,5 +91,5 @@ Pls post your suggestions and bugs in [issues](https://github.com/hbdmapi/huobi_
 
 ## What Users Say
 
-igkoh(Ph.D. theoretical physics, Professor at Korea Advanced Institute of Science and Technology): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
+Ingyu Koh(Former IBM scientist, Professor at Korea Advanced Institute of Science and Technology, Ph.D in theoretical physics): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
 

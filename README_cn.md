@@ -83,4 +83,4 @@ issue区发帖提问，请务必详细描述问题以及附上完整log。
 
 ## 用户评价
 
-igkoh(博士, theoretical physics, 韩国科学技术院教授 (KAIST)): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
+Ingyu Koh(前IBM科学家, 韩国科学技术院教授 (KAIST), theoretical physics博士): "I am very impressed how smartly you organized codes.  I really appreciate for your precise answers to develop successful system. Once your precise guidance clears obstacle, real progresses are made."
