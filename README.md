@@ -71,7 +71,7 @@ ProjectName
 
 Strategy config file [config.json](config.json):
 
-- ACCOUNTS `list` your hdbm account name；
+- ACCOUNTS `list` your huobi account name；
 - strategy `string` your strategy name;
 - symbol `string` the trade code,such as BTC-USD
 - MARKETS `list` the market config.
