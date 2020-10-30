@@ -489,9 +489,20 @@ class HuobiFutureTrade(Websocket):
             order = Order(**info)
             self._orders[order_no] = order
         
+        order.trade_quantity = None
+        order.trade_price = None
         if order_info.get("trade"):
+            quantity = 0
+            price = 0
+            amount = 0
+            count = len(order_info.get("trade"))
             for trade in order_info.get("trade"):
                 order.role = trade.get("role")
+                quantity += float(trade.get("trade_volume"))
+                amount += float(trade.get("trade_volume")*trade.get("trade_price")) 
+            price = amount/quantity
+            order.trade_quantity = int(quantity)
+            order.trade_price = price
 
         if status in [1, 2, 3]:
             order.status = ORDER_STATUS_SUBMITTED
