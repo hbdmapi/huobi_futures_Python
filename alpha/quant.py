@@ -34,6 +34,7 @@ class Quant:
         self._get_event_loop()
         self._load_settings(config_module)
         self._init_logger()
+        self._init_db_instance()
         self._get_version()
         self._do_heartbeat()
 
@@ -84,6 +85,12 @@ class Quant:
             logger.initLogger(level)
         else:
             logger.initLogger(level, path, name, clear, backup_count)
+    
+    def _init_db_instance(self):
+        """Initialize db."""
+        if config.mongodb:
+            from quant.utils.mongo import initMongodb
+            initMongodb(**config.mongodb)
 
     def _do_heartbeat(self):
         """Start server heartbeat."""
