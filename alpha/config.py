@@ -35,6 +35,7 @@ class Config:
         self.accounts = []
         self.markets = {}
         self.heartbeat = {}
+        self.mongodb = {}
         self.proxy = None
         self.config_file = None
 
@@ -68,6 +69,7 @@ class Config:
         self.server_id = update_fields.get("SERVER_ID", tools.get_uuid1())
         self.log = update_fields.get("LOG", {})
         self.platforms = update_fields.get("PLATFORMS", {})
+        self.mongodb = update_fields.get("MONGODB", None)
         self.accounts = update_fields.get("ACCOUNTS", [])
         self.markets = update_fields.get("MARKETS", [])
         self.heartbeat = update_fields.get("HEARTBEAT", {})
