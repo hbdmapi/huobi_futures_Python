@@ -108,7 +108,53 @@ MARKET行情配置。
 - trades_length: `int` trades队列的最大长度
 - wss: `string` wss行情订阅地址
 
-##### 5. 其他说明：
+
+##### 6. Mongodb使用
+
+在config.json中加入mongodb配置
+
+```json
+    "MONGODB": {
+        "host": "127.0.0.1",
+        "port": 27017,
+        "username": "root",
+        "password": "root"
+    }
+```
+
+使用例子：
+
+```python
+
+    from quant.utils import mongo
+
+    async def on_event_kline_update(self, kline: Kline):
+        """ 订单薄更新
+        """
+        logger.debug("kline:", kline, caller=self)
+        self.last_kline.update({kline.platform + '|' + kline.symbol + '|' + kline.kline_type: kline})
+        result = await mongo.MongoDBBase('quant', 'kline').find_one_and_update({'platform': kline.platform, 'symbol': kline.symbol, \
+            'timestamp': kline.timestamp, 'kline_type': kline.kline_type}, {'$set': {'open': kline.open, 'high': kline.high, \
+                'close': kline.close, 'low': kline.low, 'volume': kline.volume, 'amount': kline.amount}}, upsert=True, return_document=True)
+        if not result:
+            logger.error("insert mongo error ", kline.platform+kline.symbol, kline, result)
+        logger.debug("insert mongo success: ", result)
+```
+
+##### 7、接入钉钉
+
+```python
+
+    from quant.utils.dingding import DingTalk
+
+    msg = "DingDing Alarm"
+    await DingTalk.send_text_msg(random.choice(self._dingding_access_token), msg)
+
+```
+
+
+
+##### 8. 其他说明：
 
 - SERVER_ID `string`  策略实例标示
 - strategy `string`  策略名字
