@@ -126,7 +126,7 @@ MARKET行情配置。
 
 ```python
 
-    from quant.utils import mongo
+    from alpha.utils import mongo
 
     async def on_event_kline_update(self, kline: Kline):
         """ 订单薄更新
@@ -145,10 +145,11 @@ MARKET行情配置。
 
 ```python
 
-    from quant.utils.dingding import DingTalk
+    from alpha.utils.dingding import DingTalk
 
     msg = "DingDing Alarm"
-    await DingTalk.send_text_msg(random.choice(self._dingding_access_token), msg)
+    dingding_access_token = "xxxxxx"
+    await DingTalk.send_text_msg(dingding_access_token, msg)
 
 ```
 
