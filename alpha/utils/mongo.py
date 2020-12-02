@@ -16,8 +16,8 @@ import motor.motor_asyncio
 from bson.objectid import ObjectId
 from urllib.parse import quote_plus
 
-from quant.utils import tools
-from quant.utils import logger
+from alpha.utils import tools
+from alpha.utils import logger
 
 
 __all__ = ("initMongodb", "MongoDBBase", )

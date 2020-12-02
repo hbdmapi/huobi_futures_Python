@@ -25,6 +25,7 @@ class Quant:
     def __init__(self):
         self.loop = None
 
+
     def initialize(self, config_module=None):
         """ Initialize.
 
@@ -89,7 +90,7 @@ class Quant:
     def _init_db_instance(self):
         """Initialize db."""
         if config.mongodb:
-            from quant.utils.mongo import initMongodb
+            from alpha.utils.mongo import initMongodb
             initMongodb(**config.mongodb)
 
     def _do_heartbeat(self):
