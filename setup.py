@@ -5,7 +5,7 @@ from distutils.core import setup
 
 setup(
     name="alphaquant",
-    version="1.1.3",
+    version="1.1.4",
     packages=[
         "alpha",
         "alpha.utils",

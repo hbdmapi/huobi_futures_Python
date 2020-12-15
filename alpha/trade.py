@@ -75,6 +75,8 @@ class Trade:
             from alpha.platforms.huobi_option_trade import HuobiOptionTrade as T
         elif platform == const.HUOBI_USDT_SWAP:
             from alpha.platforms.huobi_usdt_swap_trade import HuobiUsdtSwapTrade  as T
+        elif platform == const.HUOBI_USDT_SWAP_CROSS:
+            from alpha.platforms.huobi_usdt_swap_cross_trade import HuobiUsdtSwapCrossTrade  as T
         else:
             logger.error("platform error:", platform, caller=self)
             e = Error("platform error")
