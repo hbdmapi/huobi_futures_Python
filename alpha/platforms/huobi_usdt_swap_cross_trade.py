@@ -567,7 +567,7 @@ class HuobiUsdtSwapCrossTrade(Websocket):
             symbol = item["margin_account"].upper()
             total = float(item["margin_balance"])
             #free = float(item["margin_available"])
-            locked = float(item["margin_frozen"])
+            locked = float(item["margin_frozen"])+float(item["margin_position"])
             free = total - locked
             if total > 0:
                 assets[symbol] = {
