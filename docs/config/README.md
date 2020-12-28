@@ -132,7 +132,6 @@ MARKET行情配置。
         """ 订单薄更新
         """
         logger.debug("kline:", kline, caller=self)
-        self.last_kline.update({kline.platform + '|' + kline.symbol + '|' + kline.kline_type: kline})
         result = await mongo.MongoDBBase('quant', 'kline').find_one_and_update({'platform': kline.platform, 'symbol': kline.symbol, \
             'timestamp': kline.timestamp, 'kline_type': kline.kline_type}, {'$set': {'open': kline.open, 'high': kline.high, \
                 'close': kline.close, 'low': kline.low, 'volume': kline.volume, 'amount': kline.amount}}, upsert=True, return_document=True)
