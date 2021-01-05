@@ -1,0 +1,34 @@
+{
+    "SERVER_ID": "data_collector",
+    "LOG": {
+        "console": true,
+        "level": "INFO",
+        "path": "/data/logs/servers/data_collector",
+        "name": "swap_maker_strategy.log",
+        "clear": true,
+        "backup_count": 5
+    },
+    "MONGODB": {
+        "host": "127.0.0.1",
+        "port": 27017,
+        "username": "root",
+        "password": "mongoadmin"
+    },
+    "MARKETS": [
+        {
+            "platform": "huobi_usdt_swap_cross",
+            "channels":[
+                "orderbook", "kline", "trade"
+            ],
+            "orderbook_length": 10,
+            "orderbooks_length": 100,
+            "klines_length": 100,
+            "trades_length": 100,
+            "wss": "wss://api.hbdm.vn"
+
+        }
+    ],
+    "strategy": "my_test_strategy",
+    "symbol": "BTC-USDT",
+    "contract_type": "USDTSWAP"
+}
