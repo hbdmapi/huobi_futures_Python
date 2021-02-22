@@ -12,7 +12,7 @@ logger.level = logging.DEBUG
 logger.addHandler(stream_handler)
 
 
-class TestAccount(unittest.TestCase):
+class TestRestAccount(unittest.TestCase):
 
     def setUp(self):
         self.api = RestAccount(config["access_key"], config["secret_key"])
