@@ -9,7 +9,7 @@ from hashlib import sha256
 
 def get(host:str, path:str, params:dict = None)->json:
     try:
-        url = 'http://{}{}'.format(host, path)
+        url = 'https://{}{}'.format(host, path)
         headers = {'Content-type':'application/x-www-form-urlencoded'}
         res = requests.get(url, params=params, headers = headers)
         data = res.json()
@@ -33,7 +33,7 @@ def get_url_suffix(method:str, access_key:str, secret_key:str, host:str, path:st
 
 def post(access_key:str, secret_key:str, host:str, path:str, data:dict = None)->json:
     try:
-        url = 'http://{}{}?{}'.format(host, path, get_url_suffix('post', access_key, secret_key, host, path))
+        url = 'https://{}{}?{}'.format(host, path, get_url_suffix('post', access_key, secret_key, host, path))
         headers = {'Accept':'application/json', 'Content-type':'application/json'}
         res = requests.post(url, json=data, headers = headers)
         data = res.json()
