@@ -1,21 +1,17 @@
-import logging
-from alpha.platforms.huobi_usdt_swap.rest_account import *
 import sys
 import unittest
 from config import *
 
 sys.path.append('..')
-
-logger = logging.getLogger()
-stream_handler = logging.StreamHandler(sys.stdout)
-logger.level = logging.DEBUG
-logger.addHandler(stream_handler)
+from alpha.platforms.huobi_usdt_swap.logger import *
+from alpha.platforms.huobi_usdt_swap.rest_account import *
 
 
 class TestRestAccount(unittest.TestCase):
 
-    def setUp(self):
-        self.api = RestAccount(config["access_key"], config["secret_key"])
+    @classmethod
+    def setUpClass(cls):
+        cls.api = RestAccount(config["access_key"], config["secret_key"])
 
     def test_isolated_get_account_info(self):
         result = self.api.isolated_get_account_info(

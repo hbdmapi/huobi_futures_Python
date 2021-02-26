@@ -1,6 +1,6 @@
 import requests
 from urllib import parse
-from alpha.utils import logger
+from alpha.platforms.huobi_usdt_swap.logger import *
 import json
 from datetime import datetime
 import hmac

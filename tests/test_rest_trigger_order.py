@@ -1,21 +1,17 @@
-import logging
-from alpha.platforms.huobi_usdt_swap.rest_trigger_order import *
 import sys
 import unittest
 from config import *
 
 sys.path.append('..')
-
-logger = logging.getLogger()
-stream_handler = logging.StreamHandler(sys.stdout)
-logger.level = logging.DEBUG
-logger.addHandler(stream_handler)
+from alpha.platforms.huobi_usdt_swap.logger import *
+from alpha.platforms.huobi_usdt_swap.rest_trigger_order import *
 
 
 class TestRestTriggerOrder(unittest.TestCase):
 
-    def setUp(self):
-        self.api = RestTriggerOrder(config["access_key"], config["secret_key"])
+    @classmethod
+    def setUpClass(cls):
+        cls.api = RestTriggerOrder(config["access_key"], config["secret_key"])
     
     def test_isolated_order(self):
         result = self.api.isolated_order(
