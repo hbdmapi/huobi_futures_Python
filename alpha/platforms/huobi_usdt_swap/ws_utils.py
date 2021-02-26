@@ -51,18 +51,20 @@ class WsUtils:
             elif opdata == 'notify': # account/system data
                 pass
         elif 'subbed' in jdata: # sub success response
+            id = jdata['id']
+            ch = jdata['subbed']
+            self._sub_map[ch] = self._sub_map[id]
+            del self._sub_map[id]
             logger.info(plain)
         elif 'ch' in jdata: # sub market/index data
             key = jdata['ch']
-            key = key.lower()
             if key not in self._sub_map:
                 logger.error('no callbck for {}'.format(plain))
                 return
             callback = self._sub_map[key]
             callback(jdata)
         elif 'rep' in jdata: # rep data
-            key = jdata['rep']
-            key = key.lower()
+            key = jdata['id']
             if key not in self._req_map:
                 logger.error('no callbck for {}'.format(plain))
                 return
@@ -78,33 +80,31 @@ class WsUtils:
     def _on_error(self, error):
         logger.error(error)
 
-    def sub(self, req: dict, key:str, callback):
+    def sub(self, req: dict, id:str, callback):
         data = json.dumps(req)
-        key = key.lower()
 
         while not self._has_open:
             time.sleep(1)
 
-        if key in self._sub_map:
-            self._sub_map[key] = callback
+        if id in self._sub_map:
+            self._sub_map[id] = callback
             return
         else:
-            self._sub_map[key] = callback
+            self._sub_map[id] = callback
         self._ws.send(data)
         logger.info(data)
 
-    def req(self, req: dict, key:str, callback):
+    def req(self, req: dict, id:str, callback):
         data = json.dumps(req)
-        key = key.lower()
 
         while not self._has_open:
             time.sleep(1)
 
-        if key in self._req_map:
-            self._req_map[key] = callback
+        if id in self._req_map:
+            self._req_map[id] = callback
             return
         else:
-            self._req_map[key] = callback
+            self._req_map[id] = callback
         self._ws.send(data)
         logger.info(data)
 
