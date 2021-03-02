@@ -35,38 +35,13 @@ class WsUtils:
         if access_key is not None or secret_key is not None:
             self._auth = False
 
-        self._sub_map = {}
-        self._req_map = {}
+        self._sub_str = None
+        self._sub_callback = None
+        self._req_callback = None
+        self._active_close = False
 
     def __del__(self):
         self.close()
-
-    def _send_auth_data(self, method: str, path: str, host: str, access_key: str, secret_key: str):
-        # timestamp
-        timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
-
-        # get Signature
-        suffix = 'AccessKeyId={}&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp={}'.format(
-            access_key, parse.quote(timestamp))
-        payload = '{}\n{}\n{}\n{}'.format(method.upper(), host, path, suffix)
-
-        digest = hmac.new(secret_key.encode('utf8'), payload.encode(
-            'utf8'), digestmod=sha256).digest()
-        signature = base64.b64encode(digest).decode()
-
-        # data
-        data = {
-            "op": "auth",
-            "type": "api",
-            "AccessKeyId": access_key,
-            "SignatureMethod": "HmacSHA256",
-            "SignatureVersion": "2",
-            "Timestamp": timestamp,
-            "Signature": signature
-        }
-        data = json.dumps(data)
-        self._ws.send(data)
-        logger.info(data)
 
     def _on_open(self):
         logger.info('ws open.')
@@ -74,71 +49,6 @@ class WsUtils:
             self._send_auth_data('get', self._path, self._host,
                                  self._access_key, self._secret_key)
         self._has_open = True
-
-    def _handle_notify(self, opdata: str, jdata, plain:str):
-        key = jdata['topic']
-        key = key.lower()
-        if key in self._sub_map:
-            callback = self._sub_map[key]
-            callback(jdata)
-        elif key.startswith('orders_cross') and 'orders_cross.*' in self._sub_map:
-            callback = self._sub_map['orders_cross.*']
-            callback(jdata)
-        elif key.startswith('orders') and 'orders.*' in self._sub_map:
-            callback = self._sub_map['orders.*']
-            callback(jdata)
-        elif key.startswith('accounts_cross') and 'accounts_cross.*' in self._sub_map:
-            callback = self._sub_map['accounts_cross.*']
-            callback(jdata)
-        elif key.startswith('accounts') and 'accounts.*' in self._sub_map:
-            callback = self._sub_map['accounts.*']
-            callback(jdata)
-        elif key.startswith('positions_cross') and 'positions_cross.*' in self._sub_map:
-            callback = self._sub_map['positions_cross.*']
-            callback(jdata)
-        elif key.startswith('positions') and 'positions.*' in self._sub_map:
-            callback = self._sub_map['positions.*']
-            callback(jdata)
-        elif key.startswith('matchorders_cross') and 'matchorders_cross.*' in self._sub_map:
-            callback = self._sub_map['matchOrders_cross.*']
-            callback(jdata)
-        elif key.startswith('matchorders') and 'matchorders.*' in self._sub_map:
-            callback = self._sub_map['matchOrders.*']
-            callback(jdata)
-        elif key.endswith('.liquidation_orders') and 'public.*.liquidation_orders' in self._sub_map:
-            callback = self._sub_map['public.*.liquidation_orders']
-            callback(jdata)
-        elif key.endswith('.funding_rate') and 'public.*.funding_rate' in self._sub_map:
-            callback = self._sub_map['public.*.funding_rate']
-            callback(jdata)
-        elif key.endswith('.contract_info') and 'public.*.contract_info' in self._sub_map:
-            callback = self._sub_map['public.*.contract_info']
-            callback(jdata)
-        elif key.startswith('trigger_order_cross.') and 'trigger_order_cross.*' in self._sub_map:
-            callback = self._sub_map['trigger_order_cross.*']
-            callback(jdata)
-        elif key.startswith('trigger_order.') and 'trigger_order.*' in self._sub_map:
-            callback = self._sub_map['trigger_order.*']
-            callback(jdata)
-        elif key == 'accounts_cross':
-            margin_account = jdata['data'][0]['margin_account'].lower()
-            key = '{}.{}'.format(key, margin_account)
-            if key in self._sub_map:
-                callback = self._sub_map[key]
-                callback(jdata)
-            else:
-                logger.error('no callbck for {}'.format(plain))
-        elif key == 'accounts'  or key == 'positions_cross' or key == 'positions':
-            contract_code = jdata['data'][0]['contract_code'].lower()
-            key = '{}.{}'.format(key, contract_code)
-            if key in self._sub_map:
-                callback = self._sub_map[key]
-                callback(jdata)
-            else:
-                logger.error('no callbck for {}'.format(plain))
-        else:
-            logger.error('no callbck for {}'.format(plain))
-            return
 
     def _on_msg(self, message):
         plain = gzip.decompress(message).decode()
@@ -156,87 +66,60 @@ class WsUtils:
                     self._auth = True
                 logger.info(plain)
             elif opdata == 'sub':
-                error_code = jdata['err-code']
-                if error_code == 0:
-                    id = jdata['cid']
-                    ch = jdata['topic'].lower()
-                    self._sub_map[ch] = self._sub_map[id]
-                    del self._sub_map[id]
                 logger.info(plain)
             elif opdata == 'unsub':
-                id = jdata['topic']
-                if id in self._sub_map:
-                    del self._sub_map[id]
                 logger.info(plain)
-            elif opdata == 'notify':  # account/system data
-                self._handle_notify(opdata, jdata, plain)
             else:
-                logger.error('unknow data:\n{}'.format(plain))
-        elif 'subbed' in jdata:  # sub success response
-            id = jdata['id']
-            ch = jdata['subbed']
-            self._sub_map[ch] = self._sub_map[id]
-            del self._sub_map[id]
+                pass
+        elif 'subbed' in jdata:
             logger.info(plain)
-        elif 'ch' in jdata:  # sub market/index data
-            key = jdata['ch']
-            if key not in self._sub_map:
-                logger.error('no callbck for {}'.format(plain))
-                return
-            callback = self._sub_map[key]
-            callback(jdata)
-        elif 'rep' in jdata:  # rep data
-            key = jdata['id']
-            if key not in self._req_map:
-                logger.error('no callbck for {}'.format(plain))
-                return
-            callback = self._req_map[key]
-            callback(jdata)
-            del self._req_map[key]
+        elif 'ch' in jdata:
+            if self._sub_callback is not None:
+                self._sub_callback(jdata)
+        elif 'rep' in jdata:
+            if self._req_callback is not None:
+                self._req_callback(jdata)
+                self._req_callback = None
         else:
-            logger.error('unknow data:\n{}'.format(plain))
+            pass
 
     def _on_close(self):
         logger.info("ws close.")
+        if not self._active_close and self._sub_str is not None:
+            self.sub(self._sub_str, self._sub_callback)
 
     def _on_error(self, error):
         logger.error(error)
 
-    def sub(self, req: dict, id: str, callback):
-        data = json.dumps(req)
-
+    def _sub(self, sub_str: str, callback):
         while not self._has_open:
             time.sleep(1)
 
-        if id in self._sub_map:
-            self._sub_map[id] = callback
-            return
-        else:
-            self._sub_map[id] = callback
-        self._ws.send(data)
-        logger.info(data)
+        self._sub_str = sub_str
+        self._sub_callback = callback
+        self._ws.send(sub_str)
+        logger.info(sub_str)
 
-    def unsub(self, req: dict, id: str):
-        data = json.dumps(req)
-
+    def _unsub(self, unsub_str: str):
         while not self._has_open:
             time.sleep(1)
-        self._ws.send(data)
-        logger.info(data)
+        
+        self._sub_str = None
+        self._sub_callback = None
+        self._ws.send(unsub_str)
+        logger.info(unsub_str)
 
-    def req(self, req: dict, id: str, callback):
-        data = json.dumps(req)
-
+    def _req(self, req_str: str, callback):
         while not self._has_open:
             time.sleep(1)
-
-        if id in self._req_map:
-            self._req_map[id] = callback
-            return
-        else:
-            self._req_map[id] = callback
-        self._ws.send(data)
-        logger.info(data)
+            
+        self._req_callback = callback
+        self._ws.send(req_str)
+        logger.info(req_str)
 
     def close(self):
+        self._active_close = True
+        self._sub_str = None
+        self._sub_callback = None
+        self._req_callback = None
         self._ws.close()

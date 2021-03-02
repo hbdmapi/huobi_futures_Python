@@ -3,7 +3,7 @@ import logging
 import sys
 from logging.handlers import TimedRotatingFileHandler
 
-__LOGGING_MSG_FORMAT = '%(asctime)s|%(levelname)s|%(filename)s|%(lineno)d|%(message)s||'
+__LOGGING_MSG_FORMAT = '%(asctime)s|%(levelname)s|%(filename)s|%(lineno)d|%(thread)d|%(message)s||'
 __LOGGING_DATE_FORMAT = '%Y-%m-%d %H:%M:%S'
 __formatter = logging.Formatter(__LOGGING_MSG_FORMAT, __LOGGING_DATE_FORMAT)
 
