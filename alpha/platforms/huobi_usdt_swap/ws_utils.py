@@ -43,6 +43,33 @@ class WsUtils:
     def __del__(self):
         self.close()
 
+    def _send_auth_data(self, method: str, path: str, host: str, access_key: str, secret_key: str):
+        # timestamp
+        timestamp = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%S")
+
+        # get Signature
+        suffix = 'AccessKeyId={}&SignatureMethod=HmacSHA256&SignatureVersion=2&Timestamp={}'.format(
+            access_key, parse.quote(timestamp))
+        payload = '{}\n{}\n{}\n{}'.format(method.upper(), host, path, suffix)
+
+        digest = hmac.new(secret_key.encode('utf8'), payload.encode(
+            'utf8'), digestmod=sha256).digest()
+        signature = base64.b64encode(digest).decode()
+
+        # data
+        data = {
+            "op": "auth",
+            "type": "api",
+            "AccessKeyId": access_key,
+            "SignatureMethod": "HmacSHA256",
+            "SignatureVersion": "2",
+            "Timestamp": timestamp,
+            "Signature": signature
+        }
+        data = json.dumps(data)
+        self._ws.send(data)
+        logger.debug(data)
+
     def _on_open(self):
         logger.info('ws open.')
         if self._auth == False:
@@ -69,6 +96,9 @@ class WsUtils:
                 logger.info(plain)
             elif opdata == 'unsub':
                 logger.info(plain)
+            elif opdata == 'notify':
+                if self._sub_callback is not None:
+                    self._sub_callback(jdata)
             else:
                 pass
         elif 'subbed' in jdata:
@@ -98,7 +128,7 @@ class WsUtils:
         self._sub_str = sub_str
         self._sub_callback = callback
         self._ws.send(sub_str)
-        logger.info(sub_str)
+        logger.debug(sub_str)
 
     def _unsub(self, unsub_str: str):
         while not self._has_open:
@@ -107,7 +137,7 @@ class WsUtils:
         self._sub_str = None
         self._sub_callback = None
         self._ws.send(unsub_str)
-        logger.info(unsub_str)
+        logger.debug(unsub_str)
 
     def _req(self, req_str: str, callback):
         while not self._has_open:
