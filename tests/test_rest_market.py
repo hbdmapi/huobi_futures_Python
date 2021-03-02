@@ -163,6 +163,11 @@ class TestRestMarket(unittest.TestCase):
         logger.info(result)
         self.assertEqual('ok', result['status'])
 
+    def test_get_batch_funding_rate(self):
+        result = self.api.get_batch_funding_rate()
+        logger.info(result)
+        self.assertEqual('ok', result['status'])
+
     def test_get_historical_funding_rate(self):
         result = self.api.get_historical_funding_rate(
             {"contract_code": "btc-usdt", "page_index": 2, "page_size": 50})

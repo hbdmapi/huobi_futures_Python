@@ -9,6 +9,10 @@ class RestAccount:
             host = "api.btcgateway.pro"
         self.host = host
     
+    def get_balance_valuation(self, data: dict = None) -> json:
+        path = "/linear-swap-api/v1/swap_balance_valuation"
+        return post(self.access_key, self.secret_key, self.host, path, data)
+    
     def isolated_get_account_info(self, data: dict = None) -> json:
         path = "/linear-swap-api/v1/swap_account_info"
         return post(self.access_key, self.secret_key, self.host, path, data)

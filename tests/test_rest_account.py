@@ -13,6 +13,12 @@ class TestRestAccount(unittest.TestCase):
     def setUpClass(cls):
         cls.api = RestAccount(config["access_key"], config["secret_key"])
 
+    def test_get_balance_valuation(self):
+        result = self.api.get_balance_valuation(
+            {"valuation_asset": "usdt"})
+        logger.info(result)
+        self.assertEqual('ok', result['status'])
+
     def test_isolated_get_account_info(self):
         result = self.api.isolated_get_account_info(
             {"contract_code": "btc-usdt"})

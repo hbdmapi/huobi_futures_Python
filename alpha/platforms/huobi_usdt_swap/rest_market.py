@@ -107,6 +107,10 @@ class RestMarket:
         path = "/linear-swap-api/v1/swap_funding_rate"
         return get(self.host, path, params)
 
+    def get_batch_funding_rate(self, params: dict = None) -> json:
+        path = "/linear-swap-api/v1/swap_batch_funding_rate"
+        return get(self.host, path, params)
+
     def get_historical_funding_rate(self, params: dict = None) -> json:
         path = "/linear-swap-api/v1/swap_historical_funding_rate"
         return get(self.host, path, params)
