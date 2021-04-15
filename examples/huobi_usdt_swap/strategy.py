@@ -47,7 +47,10 @@ class MyStrategy:
         self.trades_length = config.markets[0]["trades_length"]
         self.market_wss = config.markets[0]["wss"]
 
-        self.contract_size = 0.01
+        
+        # 杠杆与面值
+        self.lever_rate = 1
+        self.contract_size = 0.001
         self.orderbook_invalid_seconds = 10
 
         self.last_bid_price = 0 # 上次的买入价格
@@ -131,18 +134,18 @@ class MyStrategy:
             action = ORDER_ACTION_BUY
             new_price = str(price)  # 将价格转换为字符串，保持精度
             if quantity:
-                orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT, "lever_rate": 1})
+                orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT, "lever_rate": self.lever_rate})
                 self.last_ask_price = self.ask1_price
         if self.trader.assets and self.trader.assets.assets.get(self.raw_symbol):
             # 开空单
             price = round(self.bid1_price + 0.1, 1)
-            volume = int(float(self.trader.assets.assets.get(self.raw_symbol).get("free")) / price / self.contract_size) 
+            volume = int(float(self.trader.assets.assets.get(self.raw_symbol).get("free")) / price / self.contract_size * self.lever_rate) 
             if volume >= 1:
                 quantity = - volume #  空1张
                 action = ORDER_ACTION_SELL
                 new_price = str(price)  # 将价格转换为字符串，保持精度
                 if quantity:
-                    orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT, "lever_rate": 1})
+                    orders_data.append({"price": new_price, "quantity": quantity, "action": action, "order_type": ORDER_TYPE_LIMIT, "lever_rate": self.lever_rate})
                     self.last_bid_price = self.bid1_price
 
         if orders_data:
