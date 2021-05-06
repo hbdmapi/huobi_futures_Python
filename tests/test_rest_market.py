@@ -43,6 +43,12 @@ class TestRestMarket(unittest.TestCase):
         logger.info(result)
         self.assertEqual('ok', result['status'])
 
+    def test_get_bbo(self):
+        result = self.api.get_bbo(
+            {"contract_code": "btc-usdt"})
+        logger.info(result)
+        self.assertEqual('ok', result['status'])
+
     def test_get_kline(self):
         result = self.api.get_kline(
             {"contract_code": "btc-usdt", "period": "1min", "size": 10})

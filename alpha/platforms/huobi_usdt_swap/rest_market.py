@@ -27,6 +27,10 @@ class RestMarket:
         path = "/linear-swap-ex/market/depth"
         return get(self.host, path, params)
 
+    def get_bbo(self, params: dict = None) -> json:
+        path = "/linear-swap-ex/market/bbo"
+        return get(self.host, path, params)
+
     def get_kline(self, params: dict = None) -> json:
         path = "/linear-swap-ex/market/history/kline"
         return get(self.host, path, params)
