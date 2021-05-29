@@ -1,0 +1,96 @@
+{
+    "SERVER_ID": "swap_maker_strategy",
+    "LOG": {
+        "console": true,
+        "level": "ERROR",
+        "path": "/data/logs/servers/swap_maker_strategy",
+        "name": "swap_maker_strategy.log",
+        "clear": true,
+        "backup_count": 5
+    },
+    "ACCOUNTS": [
+        {
+            "platform": "huobi_usdt_swap_cross",
+            "account": "foonsun",
+            "host": "https://api.hbdm.vn",
+            "wss": "wss://api.hbdm.vn",
+	    "access_key": "",
+            "secret_key": ""
+
+        }
+    ],
+    "MARKETS": [
+        {
+            "platform": "huobi_usdt_swap_cross",
+            "channels":[
+                "orderbook", "kline", "trade"
+            ],
+            "orderbook_length": 10,
+            "orderbooks_length": 100,
+            "klines_length": 100,
+            "trades_length": 100,
+            "wss": "wss://api.hbdm.vn"
+
+        }
+    ],
+    "SYMBOLS":[
+   	{
+	  "symbol": "BTC-USDT",
+	  "contract_size": 0.001
+	},
+   	{
+	  "symbol": "ETH-USDT",
+	  "contract_size": 0.01
+	},
+   	{
+	  "symbol": "UNI-USDT",
+	  "contract_size": 1
+	},
+   	{
+	  "symbol": "XRP-USDT",
+	  "contract_size": 10
+	},
+   	{
+	  "symbol": "1INCH-USDT",
+	  "contract_size": 1
+	},
+   	{
+	  "symbol": "ADA-USDT",
+	  "contract_size": 10
+	},
+   	{
+	  "symbol": "ATOM-USDT",
+	  "contract_size": 1
+	},
+   	{
+	  "symbol": "BCH-USDT",
+	  "contract_size": 0.01
+	},
+   	{
+	  "symbol": "BNB-USDT",
+	  "contract_size": 0.1
+	},
+   	{
+	  "symbol": "BSV-USDT",
+	  "contract_size": 0.01
+	},
+   	{
+	  "symbol": "CHZ-USDT",
+	  "contract_size": 10
+	},
+   	{
+	  "symbol": "CRV-USDT",
+	  "contract_size": 1
+	},
+   	{
+	  "symbol": "DASH-USDT",
+	  "contract_size": 0.1
+	},
+   	{
+	  "symbol": "LINK-USDT",
+	  "contract_size": 0.1
+	}
+    ],
+    "strategy": "ForestTest",
+    "contract_type": "USDTSWAP"
+}

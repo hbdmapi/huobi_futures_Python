@@ -230,7 +230,7 @@ class HuobiUsdtSwapCrossTrade(Websocket):
                 SingleTask.run(self._init_success_callback, False, e)
             elif "data" in success and "orders" in success["data"]:
                 for order_info in success["data"]["orders"]:
-                    order_info["ts"] = order_info["created_at"]
+                    order_info["ts"] =  int(time.time() *1000)
                     self._update_order(order_info)
                 SingleTask.run(self._init_success_callback, True, None)
             else:
