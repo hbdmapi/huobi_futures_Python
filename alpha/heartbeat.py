@@ -25,7 +25,7 @@ class HeartBeat(object):
 
     def __init__(self):
         self._count = 0  # 心跳次数
-        self._interval = 0.005  # 服务心跳执行时间间隔(秒)
+        self._interval = 1  # 服务心跳执行时间间隔(秒)
         self._print_interval = config.heartbeat.get("interval", 60)  # 心跳打印时间间隔(秒)，0为不打印
         self._tasks = {}  # 跟随心跳执行的回调任务列表，由 self.register 注册 {task_id: {...}}
 
@@ -40,7 +40,7 @@ class HeartBeat(object):
 
         # 打印心跳次数
         if self._print_interval > 0:
-            if self._count % int(self._print_interval*200) == 0:
+            if self._count % int(self._print_interval) == 0:
                 logger.info("do server heartbeat, count:", self._count, caller=self)
 
         # 设置下一次心跳回调
@@ -49,7 +49,7 @@ class HeartBeat(object):
         # 执行任务回调
         for task_id, task in self._tasks.items():
             interval = task["interval"]
-            if self._count % int(interval*200) != 0:
+            if self._count % int(interval) != 0:
                 continue
             func = task["func"]
             args = task["args"]
