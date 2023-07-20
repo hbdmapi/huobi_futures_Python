@@ -21,7 +21,7 @@ setup(
         "marketmaker", "huobi", "huobi swap", "strategy"
     ],
     install_requires=[
-        "aiohttp==3.6.2",
+        "aiohttp==3.8.5",
         "motor==2.0.0"
     ],
 )
